@@ -987,14 +987,15 @@
         <p>La création d'une cellule nationale suit un processus simple : un groupe d'étudiants motivés se manifeste auprès de la direction du réseau, présente sa faculté et son projet, puis le Bureau Exécutif accompagne la structuration et la reconnaissance officielle de la nouvelle cellule.</p>
       </div>
       <div class="note-band" style="margin-top:24px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><span>Noms et coordonnées à compléter par le Bureau Exécutif.</span></div>
-      <div class="grid-2" style="margin-top:8px">
-        <div class="card member"><div class="av">P</div><div class="role">Direction</div><b>Président du Bureau Exécutif</b><small>Représentant du réseau</small>
+      <!-- Ces deux fiches sont remplacées par les vrais titulaires dès qu'ils existent en base. -->
+      <div class="grid-2" style="margin-top:8px" id="celluleContacts">
+        <div class="card member" data-poste="Président"><div class="av">P</div><div class="role">Direction</div><b>Président du Bureau Exécutif</b><small>Représentant du réseau</small>
           <div class="contact-row">
             <span class="chip-c ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L20 13l1 4a2 2 0 0 1-2 2 16 16 0 0 1-15-15 2 2 0 0 1 2-2z"/></svg>Téléphone à ajouter</span>
             <span class="chip-c ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email à ajouter</span>
           </div>
         </div>
-        <div class="card member red"><div class="av">E</div><div class="role">Commission E</div><b>Président de la Commission E</b><small>Communication et relations extérieures</small>
+        <div class="card member red" data-poste="Président de la Commission E"><div class="av">E</div><div class="role">Commission E</div><b>Président de la Commission E</b><small>Communication et relations extérieures</small>
           <div class="contact-row">
             <span class="chip-c ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L20 13l1 4a2 2 0 0 1-2 2 16 16 0 0 1-15-15 2 2 0 0 1 2-2z"/></svg>Téléphone à ajouter</span>
             <span class="chip-c ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email à ajouter</span>
@@ -1230,7 +1231,7 @@
     var photo = document.querySelector("#view-pays .ph-box");
     if(photo){ if(o.image){ photo.innerHTML='<img src="'+esc(o.image)+'" alt="Cellule '+esc(c.name)+'" style="width:100%;height:100%;object-fit:cover">'; } }
     var bw = document.getElementById("paysBureau"); bw.innerHTML = "";
-    var roles = [["Président","P",false,o.president,o.tel_pres,o.mail_pres],["Secrétaire général","SG",false,o.sg,"",""],["Chargé de communication","C",true,o.com,"",""]];
+    var roles = [["Président","P",false,o.president,o.tel_pres,o.mail_pres],["Secrétaire général","SG",false,o.sg,o.tel_sg,o.mail_sg],["Chargé de communication","C",true,o.com,o.tel_com,o.mail_com]];
     roles.forEach(function(r){
       var el=document.createElement("div"); el.className="card member"+(r[2]?" red":"");
       el.innerHTML='<div class="av">'+r[1]+'</div><div class="role">'+r[0]+'</div><b>'+esc(r[3]||r[0])+'</b><small>Cellule '+esc(c.name)+'</small>'+contactChipsFor(r[4],r[5]);
@@ -1351,7 +1352,8 @@
               : '<div class="av">'+esc(initiales||"?")+'</div>';
             var el=document.createElement("div");
             el.className="card member"+(/Commission E/i.test(poste)?" red":"");
-            el.innerHTML = av+'<div class="role">'+esc(court)+'</div><b>'+esc(nom)+'</b><small>'+esc(bas)+'</small>';
+            el.innerHTML = av+'<div class="role">'+esc(court)+'</div><b>'+esc(nom)+'</b><small>'+esc(bas)+'</small>'
+              +contactChipsFor(d.tel||"", d.mail||"");
             return el;
           };
 
@@ -1370,6 +1372,24 @@
             host.appendChild(h); host.appendChild(grid);
           });
           if(fb) fb.style.display="none";
+        }
+
+        // Page « Créer une cellule » : on remplace les deux fiches de contact par les vrais
+        // titulaires, en les retrouvant sur le poste annoncé en data-poste.
+        var cc=document.getElementById("celluleContacts");
+        if(cc){
+          Array.prototype.forEach.call(cc.querySelectorAll("[data-poste]"), function(carte){
+            var vise=carte.getAttribute("data-poste");
+            // Égalité stricte, ou libellé suivi du tiret de description. Un simple indexOf===0
+            // ferait matcher « Président de la Commission E » sur la fiche « Président ».
+            var m=membres.filter(function(d){
+              return d.poste===vise || d.poste.indexOf(vise+" —")===0;
+            })[0];
+            if(!m) return;
+            var nomEl=carte.querySelector("b"), row=carte.querySelector(".contact-row");
+            if(nomEl && m.titre) nomEl.textContent=m.titre;
+            if(row) row.outerHTML=contactChipsFor(m.tel||"", m.mail||"");
+          });
         }
       }
 

@@ -298,7 +298,7 @@
       fields:[{k:"titre",l:"Titre",t:"text",req:true},{k:"image",l:"Image de couverture",t:"image"},{k:"categorie",l:"Catégorie",t:"select",opt:["Assises","Vie des cellules","Santé publique","Communiqué"]},{k:"texte",l:"Texte de l'article",t:"rich"},{k:"date",l:"Date de publication",t:"date"}],
       title:"titre", meta:"date", badge:"categorie" },
     pays:{ label:"Pages Pays", singular:"une page pays", icon:ICON.pays,
-      fields:[{k:"titre",l:"Pays / délégation",t:"select",opt:PAYS8,req:true},{k:"image",l:"Photo de la cellule",t:"image"},{k:"texte",l:"Présentation",t:"rich"},{k:"president",l:"Président (nom)",t:"text"},{k:"tel_pres",l:"Téléphone du président",t:"text"},{k:"mail_pres",l:"Email du président",t:"text"},{k:"sg",l:"Secrétaire général (nom)",t:"text"},{k:"com",l:"Chargé de communication (nom)",t:"text"}],
+      fields:[{k:"titre",l:"Pays / délégation",t:"select",opt:PAYS8,req:true},{k:"image",l:"Photo de la cellule",t:"image"},{k:"texte",l:"Présentation",t:"rich"},{k:"president",l:"Président (nom)",t:"text"},{k:"tel_pres",l:"Téléphone du président",t:"text"},{k:"mail_pres",l:"Email du président",t:"text"},{k:"sg",l:"Secrétaire général (nom)",t:"text"},{k:"tel_sg",l:"Téléphone du secrétaire général",t:"text"},{k:"mail_sg",l:"Email du secrétaire général",t:"text"},{k:"com",l:"Chargé de communication (nom)",t:"text"},{k:"tel_com",l:"Téléphone du chargé de communication",t:"text"},{k:"mail_com",l:"Email du chargé de communication",t:"text"}],
       title:"titre", meta:"president", badge:null },
     assises:{ label:"Éditions Assises", singular:"une édition", icon:ICON.assises,
       fields:[{k:"titre",l:"Titre de l'édition",t:"text",req:true,ph:"ex. 21es Assises du REMAO"},{k:"image",l:"Affiche / logo",t:"image"},{k:"ville",l:"Ville hôte",t:"text"},{k:"dates",l:"Dates",t:"text",ph:"ex. Octobre 2026"},{k:"theme",l:"Thème",t:"text"},{k:"texte",l:"Programme",t:"rich"},{k:"statut",l:"Statut",t:"select",opt:["À venir","En cours","Archivée"]},{k:"lien",l:"Lien d'inscription",t:"text"}],
@@ -310,7 +310,7 @@
       fields:[{k:"titre",l:"Nom du partenaire",t:"text",req:true},{k:"image",l:"Logo",t:"image"},{k:"lien",l:"Lien vers le site",t:"text"},{k:"categorie",l:"Catégorie",t:"select",opt:["Institutionnel","Sponsor","Académique"]}],
       title:"titre", meta:"lien", badge:"categorie" },
     membre:{ label:"Membres du Bureau", singular:"un membre", icon:ICON.membre,
-      fields:[{k:"titre",l:"Nom complet",t:"text",req:true},{k:"image",l:"Photo",t:"image"},{k:"poste",l:"Poste officiel",t:"select",opt:POSTES,req:true},{k:"pays",l:"Pays d'origine",t:"select",opt:PAYS8}],
+      fields:[{k:"titre",l:"Nom complet",t:"text",req:true},{k:"image",l:"Photo",t:"image"},{k:"poste",l:"Poste officiel",t:"select",opt:POSTES,req:true},{k:"pays",l:"Pays d'origine",t:"select",opt:PAYS8},{k:"tel",l:"Téléphone",t:"text",ph:"ex. +227 90 00 00 00"},{k:"mail",l:"Email",t:"text",ph:"ex. president@remao.org"}],
       title:"titre", meta:"poste", badge:null }
   };
 
