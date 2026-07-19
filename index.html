@@ -225,6 +225,12 @@
     font-size:clamp(18px,2.2vw,25px); color:var(--ink); line-height:1.35; }
   .about-media .quote small { display:block; font-family:var(--font-body); font-style:normal; font-size:13px;
     color:var(--green); letter-spacing:.12em; text-transform:uppercase; margin-top:14px; font-weight:600; }
+  /* Sur photo, la citation passe en blanc avec un voile sombre : en noir sur une image
+     réelle elle deviendrait illisible dès que le bas du cliché est clair. */
+  .about-media.has-photo::after { content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(0deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.35) 38%, transparent 68%); }
+  .about-media.has-photo .quote { z-index:1; color:#fff; text-shadow:0 1px 12px rgba(0,0,0,.45); }
+  .about-media.has-photo .quote small { color:#fff; opacity:.9; }
   .about-list { list-style:none; padding:0; margin:26px 0 32px; display:grid; gap:16px; }
   .about-list li { display:flex; gap:14px; align-items:flex-start; }
   .about-list .chk { width:26px; height:26px; flex:none; border-radius:8px; display:grid; place-items:center;
@@ -1220,9 +1226,39 @@
     document.body.classList.remove("menu-open");
     document.querySelectorAll(".nav-links a").forEach(function(a){ a.classList.remove("active"); });
     if(!(opts && opts.noScroll)) window.scrollTo({ top:0, behavior: reduce?"auto":"smooth" });
+    // Le site est une application à page unique : sans cette ligne, l'URL ne change jamais
+    // et le bouton Retour du navigateur fait sortir du site au lieu de revenir en arrière.
+    if(!(opts && opts.fromHistory)) pushEtat(name, opts && opts.param);
+  }
+
+  /* ---------- Historique du navigateur ---------- */
+  function hashDe(name, param){
+    if(name==="home") return "#accueil";
+    return "#"+name+(param?("/"+param):"");
+  }
+  function pushEtat(name, param){
+    var etat={ vue:name, param:param||null }, h=hashDe(name,param);
+    // On remplace au lieu d'empiler quand on rejoue la même vue, sinon un clic répété
+    // sur le même lien oblige à appuyer plusieurs fois sur Retour.
+    var actuel=history.state;
+    if(actuel && actuel.vue===etat.vue && actuel.param===etat.param) history.replaceState(etat,"",h);
+    else history.pushState(etat,"",h);
+  }
+  function allerVers(etat){
+    if(!etat || !etat.vue || !views[etat.vue]) { showView("home",{fromHistory:true}); return; }
+    if(etat.vue==="pays" && etat.param) return openCountry(etat.param,{fromHistory:true});
+    if(etat.vue==="article" && etat.param) return openArticle(etat.param,{fromHistory:true});
+    showView(etat.vue,{fromHistory:true});
+  }
+  window.addEventListener("popstate", function(e){ allerVers(e.state || etatDepuisHash()); });
+  function etatDepuisHash(){
+    var h=(location.hash||"").replace(/^#/,"");
+    if(!h || h==="accueil") return { vue:"home", param:null };
+    var p=h.split("/");
+    return views[p[0]] ? { vue:p[0], param:p[1]||null } : { vue:"home", param:null };
   }
   var paysOverride = {};
-  function openCountry(code){
+  function openCountry(code, opts){
     var c = countries[code]; if(!c) return;
     var o = paysOverride[code] || {};
     document.getElementById("paysFlag").innerHTML = flags[code];
@@ -1240,10 +1276,10 @@
       el.innerHTML='<div class="av">'+r[1]+'</div><div class="role">'+r[0]+'</div><b>'+esc(r[3]||r[0])+'</b><small>Cellule '+esc(c.name)+'</small>'+contactChipsFor(r[4],r[5]);
       bw.appendChild(el);
     });
-    showView("pays");
+    showView("pays", { param:code, fromHistory:!!(opts&&opts.fromHistory) });
   }
-  function openArticle(id){
-    var n = news.filter(function(x){return x.id===id;})[0]; if(!n) return;
+  function openArticle(id, opts){
+    var n = news.filter(function(x){return String(x.id)===String(id);})[0]; if(!n) return;
     document.getElementById("artCrumb").textContent = n.title;
     document.getElementById("artTitle").textContent = n.title;
     document.getElementById("artCat").textContent = n.cat;
@@ -1252,7 +1288,7 @@
     var b = document.getElementById("artBody"); b.innerHTML = "";
     if(n.bodyHtml){ b.innerHTML = n.bodyHtml; }
     else { (n.body||[]).forEach(function(p){ var el=document.createElement("p"); el.textContent=p; b.appendChild(el); }); }
-    showView("article");
+    showView("article", { param:n.id, fromHistory:!!(opts&&opts.fromHistory) });
   }
 
   /* ---------- Render membre list ---------- */
@@ -1279,6 +1315,13 @@
     }
   });
 
+  /* ---------- État initial : permet aussi de partager un lien direct vers une page ---------- */
+  (function initHistorique(){
+    var etat=etatDepuisHash();
+    history.replaceState(etat,"",hashDe(etat.vue,etat.param));
+    if(etat.vue!=="home") allerVers(etat);
+  })();
+
   /* ---------- Chargement des contenus réels depuis Supabase ---------- */
   (function loadSupabase(){
     if(!window.supabase || !window.SUPA_URL){ return; }
@@ -1300,6 +1343,10 @@
             excerpt:strip(d.texte).slice(0,150), bodyHtml:d.texte||"" });
         });
         renderNews();
+        // Lien direct vers un article : les actualités arrivent après le chargement de la page,
+        // on rejoue donc l'état une fois qu'elles sont disponibles.
+        var et=history.state;
+        if(et && et.vue==="article" && et.param) openArticle(et.param,{fromHistory:true});
       }
 
       if(by.partenaire && by.partenaire.length){
@@ -1318,14 +1365,28 @@
         by.pays.forEach(function(r){ var d=r.data||{}; var code=nameToCode[d.titre]; if(code){ paysOverride[code]=d; } });
       }
 
-      /* --- Bannière d'accueil (la plus récente) --- */
+      /* --- Images du site : on prend la plus récente de chaque emplacement --- */
       if(by.banniere && by.banniere.length){
-        var ban=(by.banniere[0].data||{}).image;
+        var img=function(nom){
+          var l=by.banniere.filter(function(r){ var d=r.data||{};
+            // Sans emplacement, la fiche date d'avant ce champ : c'est une bannière.
+            return (d.emplacement||"Bannière d'accueil")===nom && d.image; });
+          return l.length ? l[0].data.image : "";
+        };
+
+        var ban=img("Bannière d'accueil");
         var zone=document.querySelector(".hero-photo"), ph=zone&&zone.querySelector(".ph");
         if(ban && ph){
           ph.style.backgroundImage="url("+JSON.stringify(ban)+")";
           zone.classList.add("has-photo");
           var note=zone.querySelector(".photo-note"); if(note) note.remove();
+        }
+
+        var illu=img("Illustration « Qui sommes-nous »");
+        var media=document.querySelector(".about-media"), scene=media&&media.querySelector(".scene");
+        if(illu && scene){
+          scene.style.background="var(--card-2) center / cover no-repeat url("+JSON.stringify(illu)+")";
+          media.classList.add("has-photo");
         }
       }
 

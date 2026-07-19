@@ -278,6 +278,9 @@
   };
   var PAYS8=["Bénin","Burkina Faso","Côte d'Ivoire","Guinée","Mali","Niger","Sénégal","Togo"];
   // Postes officiels, conformes aux Statuts et au Règlement intérieur (art. 10, 11, 13, 19, 22).
+  // Emplacements d'image de la page d'accueil. Les fiches créées avant l'ajout de ce champ
+  // n'ont pas d'emplacement : le site les traite comme des bannières.
+  var EMPLACEMENTS=["Bannière d'accueil","Illustration « Qui sommes-nous »"];
   var POSTES=[
     "Président",
     "Vice-président",
@@ -313,9 +316,11 @@
     membre:{ label:"Membres du Bureau", singular:"un membre", icon:ICON.membre,
       fields:[{k:"titre",l:"Nom complet",t:"text",req:true},{k:"image",l:"Photo",t:"image"},{k:"poste",l:"Poste officiel",t:"select",opt:POSTES,req:true},{k:"pays",l:"Pays d'origine",t:"select",opt:PAYS8},{k:"tel",l:"Téléphone",t:"text",ph:"ex. +227 90 00 00 00"},{k:"mail",l:"Email",t:"text",ph:"ex. president@remao.org"}],
       title:"titre", meta:"poste", badge:null },
-    banniere:{ label:"Bannière d'accueil", singular:"une bannière", icon:ICON.banniere,
-      fields:[{k:"titre",l:"Nom de repère",t:"text",req:true,ph:"ex. Assises de Conakry 2026"},{k:"image",l:"Image de bannière",t:"image"}],
-      title:"titre", meta:null, badge:null }
+    banniere:{ label:"Images du site", singular:"une image", icon:ICON.banniere,
+      fields:[{k:"titre",l:"Nom de repère",t:"text",req:true,ph:"ex. Assises de Conakry 2026"},
+              {k:"emplacement",l:"Emplacement sur le site",t:"select",opt:EMPLACEMENTS,req:true},
+              {k:"image",l:"Image",t:"image"}],
+      title:"titre", meta:"emplacement", badge:"emplacement" }
   };
 
   function rowToItem(r){ var o=Object.assign({},r.data||{}); o.id=r.id; return o; }
