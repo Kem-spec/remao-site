@@ -1,8 +1,8 @@
 # Site officiel du REMAO
 
-Maquette du site web officiel du **Réseau des Étudiants en Médecine d'Afrique de l'Ouest (REMAO / WAMS-Web)**.
+Site web officiel du **Réseau des Étudiants en Médecine de l'Afrique de l'Ouest (REMAO / WAMS-Web)**.
 
-Site statique (HTML/CSS/JS, un seul fichier `index.html`, autonome). Identité dérivée du sceau officiel du réseau.
+Site statique (HTML/CSS/JS) adossé à Supabase pour les contenus et l'espace d'administration. Identité dérivée du sceau officiel du réseau.
 
 ## Pages
 - Accueil (chiffres clés, Assises, délégations, actualités, adhésion)

@@ -320,7 +320,32 @@
   async function update(id,data){ var res=await SB.from("contenus").update({data:data,updated_at:new Date().toISOString()}).eq("id",id); if(res.error) throw res.error; }
   async function remove(id){ var res=await SB.from("contenus").delete().eq("id",id); if(res.error) throw res.error; }
   async function counts(){ var res=await SB.from("contenus").select("type"); if(res.error) return {}; var c={}; res.data.forEach(function(r){ c[r.type]=(c[r.type]||0)+1; }); return c; }
+  // Une photo de téléphone pèse 3 à 5 Mo. On la redimensionne dans le navigateur avant l'envoi :
+  // pas de service externe, et on économise le quota de stockage comme le temps de chargement.
+  function compressImage(file,maxPx,quality){
+    return new Promise(function(resolve){
+      if(!/^image\//.test(file.type) || /svg|gif/i.test(file.type)) return resolve(file);
+      var url=URL.createObjectURL(file), img=new Image();
+      img.onload=function(){
+        var w=img.naturalWidth, h=img.naturalHeight;
+        if(Math.max(w,h)<=maxPx && file.size<400*1024){ URL.revokeObjectURL(url); return resolve(file); }
+        var r=Math.min(1,maxPx/Math.max(w,h));
+        var c=document.createElement("canvas");
+        c.width=Math.round(w*r); c.height=Math.round(h*r);
+        c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+        URL.revokeObjectURL(url);
+        c.toBlob(function(blob){
+          if(!blob || blob.size>=file.size) return resolve(file);
+          resolve(new File([blob],file.name.replace(/\.[^.]+$/,"")+".jpg",{type:"image/jpeg"}));
+        },"image/jpeg",quality);
+      };
+      img.onerror=function(){ URL.revokeObjectURL(url); resolve(file); };
+      img.src=url;
+    });
+  }
+
   async function uploadFile(prefix,file){
+    if(/^image\//.test(file.type)) file=await compressImage(file,1600,.82);
     var ext=(file.name.split(".").pop()||"bin").toLowerCase();
     var path=prefix+"/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+"."+ext;
     var up=await SB.storage.from("medias").upload(path,file,{upsert:true,cacheControl:"3600"});
