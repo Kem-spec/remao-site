@@ -954,7 +954,7 @@
   <section class="section" style="padding-top:0">
     <div class="wrap">
       <div class="section-head"><span class="eyebrow"><span class="dot"></span>Bureau local</span><h2 style="font-size:clamp(24px,3vw,36px);font-weight:800;margin-top:14px">L'équipe de la cellule</h2></div>
-      <div class="note-band"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><span>Noms et coordonnées à compléter par la cellule nationale via le formulaire de remontée (cf. cahier des charges, section 7.4).</span></div>
+      <div class="note-band" id="notePays"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><span>Noms et coordonnées à compléter par la cellule nationale via le formulaire de remontée (cf. cahier des charges, section 7.4).</span></div>
       <div class="team" id="paysBureau"></div>
       <div style="margin-top:34px"><a class="btn btn-ghost" data-nav="home">Retour à l'accueil <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span></a></div>
     </div>
@@ -973,7 +973,7 @@
   </section>
   <section class="section" style="padding-top:0">
     <div class="wrap">
-      <div class="note-band"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><span>Les coordonnées ci-dessous sont des emplacements à compléter par le Bureau Exécutif et les cellules nationales.</span></div>
+      <div class="note-band" id="noteMembre"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><span>Les coordonnées ci-dessous sont des emplacements à compléter par le Bureau Exécutif et les cellules nationales.</span></div>
       <div class="grid-3" id="membreList"></div>
     </div>
   </section>
@@ -995,21 +995,11 @@
         <h3>Comment ça marche</h3>
         <p>La création d'une cellule nationale suit un processus simple : un groupe d'étudiants motivés se manifeste auprès de la direction du réseau, présente sa faculté et son projet, puis le Bureau Exécutif accompagne la structuration et la reconnaissance officielle de la nouvelle cellule.</p>
       </div>
-      <div class="note-band" style="margin-top:24px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><span>Noms et coordonnées à compléter par le Bureau Exécutif.</span></div>
+      <div class="note-band" id="noteCellule" style="margin-top:24px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><span>Noms et coordonnées à compléter par le Bureau Exécutif.</span></div>
       <!-- Ces deux fiches sont remplacées par les vrais titulaires dès qu'ils existent en base. -->
       <div class="grid-2" style="margin-top:8px" id="celluleContacts">
-        <div class="card member" data-poste="Président"><div class="av">P</div><div class="role">Direction</div><b>Président du Bureau Exécutif</b><small>Représentant du réseau</small>
-          <div class="contact-row">
-            <span class="chip-c ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L20 13l1 4a2 2 0 0 1-2 2 16 16 0 0 1-15-15 2 2 0 0 1 2-2z"/></svg>Téléphone à ajouter</span>
-            <span class="chip-c ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email à ajouter</span>
-          </div>
-        </div>
-        <div class="card member red" data-poste="Président de la Commission E"><div class="av">E</div><div class="role">Commission E</div><b>Président de la Commission E</b><small>Communication et relations extérieures</small>
-          <div class="contact-row">
-            <span class="chip-c ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L20 13l1 4a2 2 0 0 1-2 2 16 16 0 0 1-15-15 2 2 0 0 1 2-2z"/></svg>Téléphone à ajouter</span>
-            <span class="chip-c ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email à ajouter</span>
-          </div>
-        </div>
+        <div class="card member" data-poste="Président"><div class="av">P</div><div class="role">Direction</div><b>Président du Bureau Exécutif</b><small>Représentant du réseau</small></div>
+        <div class="card member red" data-poste="Président de la Commission E"><div class="av">E</div><div class="role">Commission E</div><b>Président de la Commission E</b><small>Communication et relations extérieures</small></div>
       </div>
       <div style="margin-top:34px"><a class="btn btn-ghost" data-nav="home">Retour à l'accueil <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span></a></div>
     </div>
@@ -1168,12 +1158,31 @@
   function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
   var SVG_TEL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L20 13l1 4a2 2 0 0 1-2 2 16 16 0 0 1-15-15 2 2 0 0 1 2-2z"/></svg>';
   var SVG_MAIL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>';
+  // Rien de renseigné, rien d'affiché : une pastille « à ajouter » sur un site public
+  // signale un contenu inachevé au visiteur plutôt qu'à l'administrateur.
   function contactChipsFor(tel,mail){
-    var phone = tel ? '<a class="chip-c mail" href="tel:'+esc(tel)+'">'+SVG_TEL+esc(tel)+'</a>' : '<span class="chip-c ph">'+SVG_TEL+'Téléphone à ajouter</span>';
-    var email = mail ? '<a class="chip-c mail" href="mailto:'+esc(mail)+'">'+SVG_MAIL+esc(mail)+'</a>' : '<span class="chip-c ph">'+SVG_MAIL+'Email à ajouter</span>';
-    return '<div class="contact-row">'+phone+email+'</div>';
+    var chips = "";
+    if(tel)  chips += '<a class="chip-c mail" href="tel:'+esc(tel)+'">'+SVG_TEL+esc(tel)+'</a>';
+    if(mail) chips += '<a class="chip-c mail" href="mailto:'+esc(mail)+'">'+SVG_MAIL+esc(mail)+'</a>';
+    return chips ? '<div class="contact-row">'+chips+'</div>' : '';
   }
   function contactChips(){ return contactChipsFor("",""); }
+
+  /* Avatar rond, photo ou initiales.
+     L'URL transite par un attribut data- échappé, jamais par style="..." : les guillemets
+     d'une URL y refermeraient l'attribut et le navigateur jetterait la règle sans rien dire.
+     Après insertion du HTML, appeler poserPhotos(conteneur). */
+  function avatarHtml(image, secours, libelle){
+    return image
+      ? '<div class="av photo" data-photo="'+esc(image)+'" role="img" aria-label="'+esc(libelle||"")+'"></div>'
+      : '<div class="av">'+esc(secours||"?")+'</div>';
+  }
+  function poserPhotos(racine){
+    (racine||document).querySelectorAll(".av.photo[data-photo]").forEach(function(n){
+      n.style.backgroundImage = "url("+JSON.stringify(n.getAttribute("data-photo"))+")";
+      n.removeAttribute("data-photo");
+    });
+  }
 
   /* ---------- Theme toggle ---------- */
   document.getElementById("themeBtn").addEventListener("click", function(){
@@ -1273,13 +1282,19 @@
     document.getElementById("paysCap").textContent = c.cap+", "+c.name;
     var photo = document.querySelector("#view-pays .ph-box");
     if(photo){ if(o.image){ photo.innerHTML='<img src="'+esc(o.image)+'" alt="Cellule '+esc(c.name)+'" style="width:100%;height:100%;object-fit:cover">'; } }
+    // La consigne interne ne s'affiche que tant que la cellule n'a rien renseigné.
+    var np = document.getElementById("notePays");
+    if(np) np.style.display = (o.president||o.sg||o.com) ? "none" : "";
     var bw = document.getElementById("paysBureau"); bw.innerHTML = "";
-    var roles = [["Président","P",false,o.president,o.tel_pres,o.mail_pres],["Secrétaire général","SG",false,o.sg,o.tel_sg,o.mail_sg],["Chargé de communication","C",true,o.com,o.tel_com,o.mail_com]];
+    var roles = [["Président","P",false,o.president,o.tel_pres,o.mail_pres,o.photo_pres],
+                 ["Secrétaire général","SG",false,o.sg,o.tel_sg,o.mail_sg,o.photo_sg],
+                 ["Chargé de communication","C",true,o.com,o.tel_com,o.mail_com,o.photo_com]];
     roles.forEach(function(r){
       var el=document.createElement("div"); el.className="card member"+(r[2]?" red":"");
-      el.innerHTML='<div class="av">'+r[1]+'</div><div class="role">'+r[0]+'</div><b>'+esc(r[3]||r[0])+'</b><small>Cellule '+esc(c.name)+'</small>'+contactChipsFor(r[4],r[5]);
+      el.innerHTML=avatarHtml(r[6], r[1], r[3]||r[0])+'<div class="role">'+r[0]+'</div><b>'+esc(r[3]||r[0])+'</b><small>Cellule '+esc(c.name)+'</small>'+contactChipsFor(r[4],r[5]);
       bw.appendChild(el);
     });
+    poserPhotos(bw);
     showView("pays", { param:code, fromHistory:!!(opts&&opts.fromHistory) });
   }
   function openArticle(id, opts){
@@ -1295,15 +1310,28 @@
     showView("article", { param:n.id, fromHistory:!!(opts&&opts.fromHistory) });
   }
 
-  /* ---------- Render membre list ---------- */
-  var ml = document.getElementById("membreList");
-  order.forEach(function(code){
-    var c = countries[code];
-    var el = document.createElement("div"); el.className="card member";
-    el.innerHTML = '<div class="flag" style="width:56px;height:40px;border-radius:8px;overflow:hidden;margin:0 auto 14px;box-shadow:var(--shadow-sm);border:1px solid var(--line)">'+flags[code]+'</div>'+
-      '<div class="role">Cellule '+c.name+'</div><b>'+c.name+'</b><small>'+c.cap+'</small>'+contactChips();
-    ml.appendChild(el);
-  });
+  /* ---------- Render membre list ----------
+     Rejouée après le chargement Supabase : les coordonnées des cellules arrivent
+     de la base, et cette page sert justement à écrire au responsable de sa délégation. */
+  function renderMembreList(){
+    var ml = document.getElementById("membreList"); if(!ml) return;
+    ml.innerHTML = "";
+    var renseigne = false;
+    order.forEach(function(code){
+      var c = countries[code], o = paysOverride[code] || {};
+      // On donne le contact du chargé de communication en priorité, c'est lui qui accueille
+      // les demandes d'adhésion ; à défaut celui du président.
+      var tel = o.tel_com || o.tel_pres || "", mail = o.mail_com || o.mail_pres || "";
+      if(tel || mail) renseigne = true;
+      var el = document.createElement("div"); el.className="card member";
+      el.innerHTML = '<div class="flag" style="width:56px;height:40px;border-radius:8px;overflow:hidden;margin:0 auto 14px;box-shadow:var(--shadow-sm);border:1px solid var(--line)">'+flags[code]+'</div>'+
+        '<div class="role">Cellule '+c.name+'</div><b>'+c.name+'</b><small>'+c.cap+'</small>'+contactChipsFor(tel,mail);
+      ml.appendChild(el);
+    });
+    var nm = document.getElementById("noteMembre");
+    if(nm) nm.style.display = renseigne ? "none" : "";
+  }
+  renderMembreList();
 
   /* ---------- Global nav delegation ---------- */
   document.addEventListener("click", function(e){
@@ -1367,6 +1395,7 @@
 
       if(by.pays && by.pays.length){
         by.pays.forEach(function(r){ var d=r.data||{}; var code=nameToCode[d.titre]; if(code){ paysOverride[code]=d; } });
+        renderMembreList();
       }
 
       /* --- Images du site : on prend la plus récente de chaque emplacement --- */
@@ -1426,13 +1455,11 @@
             var court=parts[0].trim(), detail=parts.length>1?parts[1].trim():"";
             var bas=[detail,d.pays].filter(Boolean).join(" · ") || "Bureau Exécutif";
             var initiales=nom.trim().split(/\s+/).slice(0,2).map(function(m){ return m.charAt(0).toUpperCase(); }).join("");
-            var av = d.image
-              ? '<div class="av photo" style="background-image:url('+JSON.stringify(d.image)+')" role="img" aria-label="'+esc(nom)+'"></div>'
-              : '<div class="av">'+esc(initiales||"?")+'</div>';
             var el=document.createElement("div");
             el.className="card member"+(/Commission E/i.test(poste)?" red":"");
-            el.innerHTML = av+'<div class="role">'+esc(court)+'</div><b>'+esc(nom)+'</b><small>'+esc(bas)+'</small>'
+            el.innerHTML = avatarHtml(d.image, initiales, nom)+'<div class="role">'+esc(court)+'</div><b>'+esc(nom)+'</b><small>'+esc(bas)+'</small>'
               +contactChipsFor(d.tel||"", d.mail||"");
+            poserPhotos(el);
             return el;
           };
 
@@ -1455,7 +1482,7 @@
 
         // Page « Créer une cellule » : on remplace les deux fiches de contact par les vrais
         // titulaires, en les retrouvant sur le poste annoncé en data-poste.
-        var cc=document.getElementById("celluleContacts");
+        var cc=document.getElementById("celluleContacts"), trouve=false;
         if(cc){
           Array.prototype.forEach.call(cc.querySelectorAll("[data-poste]"), function(carte){
             var vise=carte.getAttribute("data-poste");
@@ -1467,8 +1494,11 @@
             if(!m) return;
             var nomEl=carte.querySelector("b"), row=carte.querySelector(".contact-row");
             if(nomEl && m.titre) nomEl.textContent=m.titre;
-            if(row) row.outerHTML=contactChipsFor(m.tel||"", m.mail||"");
+            if(row) row.remove();
+            carte.insertAdjacentHTML("beforeend", contactChipsFor(m.tel||"", m.mail||""));
+            trouve=true;
           });
+          if(trouve){ var nc=document.getElementById("noteCellule"); if(nc) nc.style.display="none"; }
         }
       }
 
