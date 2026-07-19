@@ -1120,10 +1120,14 @@
   function newsCardEl(n){
     var el = document.createElement("article");
     el.className = "card news-card reveal in";
-    var thumbBg = n.image ? ('var(--card-2) center/cover no-repeat url('+JSON.stringify(n.image)+')') : sceneBg(n.scene);
-    el.innerHTML = '<div class="thumb"><span class="cat'+(n.red?' red':'')+'">'+n.cat+'</span><span class="scene" style="background:'+thumbBg+'"></span></div>'+
-      '<div class="body"><time>'+n.date+'</time><h3>'+n.title+'</h3><p>'+n.excerpt+'</p>'+
+    el.innerHTML = '<div class="thumb"><span class="cat'+(n.red?' red':'')+'">'+esc(n.cat)+'</span><span class="scene"></span></div>'+
+      '<div class="body"><time>'+esc(n.date)+'</time><h3>'+esc(n.title)+'</h3><p>'+esc(n.excerpt)+'</p>'+
       '<span class="more">Lire la suite <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>';
+    // Le fond se pose par la propriété DOM, pas dans l'attribut style : les guillemets de
+    // l'URL fermeraient l'attribut et la vignette resterait vide.
+    el.querySelector(".scene").style.background = n.image
+      ? ('var(--card-2) center/cover no-repeat url('+JSON.stringify(n.image)+')')
+      : sceneBg(n.scene);
     el.addEventListener("click", function(){ openArticle(n.id); });
     return el;
   }
