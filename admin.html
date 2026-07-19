@@ -273,7 +273,8 @@
     assises:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>',
     document:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>',
     partenaire:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21C7 17 3 13.5 3 9a4 4 0 0 1 7-2.6A4 4 0 0 1 17 5a4 4 0 0 1 4 4c0 4.5-4 8-9 12z"/></svg>',
-    membre:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>'
+    membre:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.4"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>',
+    banniere:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5-5-9 7"/></svg>'
   };
   var PAYS8=["Bénin","Burkina Faso","Côte d'Ivoire","Guinée","Mali","Niger","Sénégal","Togo"];
   // Postes officiels, conformes aux Statuts et au Règlement intérieur (art. 10, 11, 13, 19, 22).
@@ -311,7 +312,10 @@
       title:"titre", meta:"lien", badge:"categorie" },
     membre:{ label:"Membres du Bureau", singular:"un membre", icon:ICON.membre,
       fields:[{k:"titre",l:"Nom complet",t:"text",req:true},{k:"image",l:"Photo",t:"image"},{k:"poste",l:"Poste officiel",t:"select",opt:POSTES,req:true},{k:"pays",l:"Pays d'origine",t:"select",opt:PAYS8},{k:"tel",l:"Téléphone",t:"text",ph:"ex. +227 90 00 00 00"},{k:"mail",l:"Email",t:"text",ph:"ex. president@remao.org"}],
-      title:"titre", meta:"poste", badge:null }
+      title:"titre", meta:"poste", badge:null },
+    banniere:{ label:"Bannière d'accueil", singular:"une bannière", icon:ICON.banniere,
+      fields:[{k:"titre",l:"Nom de repère",t:"text",req:true,ph:"ex. Assises de Conakry 2026"},{k:"image",l:"Image de bannière",t:"image"}],
+      title:"titre", meta:null, badge:null }
   };
 
   function rowToItem(r){ var o=Object.assign({},r.data||{}); o.id=r.id; return o; }

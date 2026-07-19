@@ -4,8 +4,10 @@
 -- =====================================================================
 
 -- 1) Table unique des contenus (actualités, pays, assises, documents,
---    partenaires, membres). Le type distingue chaque contenu ; les champs
---    sont stockés dans "data" (jsonb) pour rester souple.
+--    partenaires, membres, bannière d'accueil). Le type distingue chaque
+--    contenu ; les champs sont stockés dans "data" (jsonb) pour rester
+--    souple. La colonne "type" n'est pas contrainte : ajouter un nouveau
+--    type de contenu ne demande aucune migration.
 create table if not exists public.contenus (
   id          uuid primary key default gen_random_uuid(),
   type        text not null,

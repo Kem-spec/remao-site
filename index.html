@@ -163,6 +163,9 @@
       repeating-linear-gradient(135deg, color-mix(in srgb,var(--ink) 5%,transparent) 0 3px, transparent 3px 22px),
       var(--paper-2);
     opacity:.55; }
+  /* Bannière réelle posée depuis l'admin : la photo remplace les aplats décoratifs,
+     mais on garde le voile ::after qui assure la lisibilité du titre par-dessus. */
+  .hero-photo.has-photo .ph { background:var(--paper-2) center / cover no-repeat; opacity:1; }
   .hero-photo::after { content:""; position:absolute; inset:0;
     background:linear-gradient(90deg, var(--paper) 20%, color-mix(in srgb,var(--paper) 40%,transparent) 48%, transparent 78%),
       linear-gradient(0deg, var(--paper) 3%, transparent 42%); }
@@ -1313,6 +1316,17 @@
 
       if(by.pays && by.pays.length){
         by.pays.forEach(function(r){ var d=r.data||{}; var code=nameToCode[d.titre]; if(code){ paysOverride[code]=d; } });
+      }
+
+      /* --- Bannière d'accueil (la plus récente) --- */
+      if(by.banniere && by.banniere.length){
+        var ban=(by.banniere[0].data||{}).image;
+        var zone=document.querySelector(".hero-photo"), ph=zone&&zone.querySelector(".ph");
+        if(ban && ph){
+          ph.style.backgroundImage="url("+JSON.stringify(ban)+")";
+          zone.classList.add("has-photo");
+          var note=zone.querySelector(".photo-note"); if(note) note.remove();
+        }
       }
 
       /* --- Membres du Bureau ---
