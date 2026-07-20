@@ -436,7 +436,21 @@
     border-radius:999px; background:var(--green-tint); color:var(--green); }
 
   /* Assises logo slot */
-  .assises-logo-slot { width:96px; height:96px; border-radius:22px; flex:none; }
+  .assises-logo-slot { width:clamp(160px,22vw,240px); height:clamp(160px,22vw,240px); border-radius:26px; flex:none; box-shadow:var(--shadow-md); }
+  .assises-head { display:flex; align-items:center; justify-content:space-between; gap:clamp(20px,4vw,48px); flex-wrap:wrap; }
+  .assises-head > div:first-child { flex:1 1 380px; min-width:0; }
+
+  /* Galerie photos d'une édition archivée : trois rangées en défilement continu. */
+  .galerie { overflow:hidden; display:grid; gap:14px;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); }
+  .galerie-ligne { display:flex; gap:14px; width:max-content; animation:galerie-defile var(--duree,60s) linear infinite; }
+  .galerie-ligne.inverse { animation-direction:reverse; }
+  .galerie-ligne:hover { animation-play-state:paused; }
+  .galerie-ligne img { height:clamp(140px,18vw,210px); width:auto; border-radius:16px; object-fit:cover;
+    border:1px solid var(--line); box-shadow:var(--shadow-sm); }
+  @keyframes galerie-defile { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce){ .galerie-ligne { animation:none; } .galerie { overflow-x:auto; } }
 
   /* Reveal */
   .reveal { opacity:0; transform:translateY(26px); filter:blur(6px);
@@ -843,12 +857,12 @@
   <section class="section subhero">
     <div class="wrap">
       <div class="breadcrumb"><a data-nav="home">Accueil</a> <span>/</span> <span>Assises du REMAO</span></div>
-      <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
-        <div class="assises-logo-slot ph-box" id="assisesLogo" aria-hidden="true"><div class="ph-fill"></div><span class="ph-label" style="inset:auto 8px 8px 8px;font-size:10px;padding:5px 9px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5-5-9 7"/></svg>Logo</span></div>
+      <div class="assises-head">
         <div>
           <span class="eyebrow"><span class="dot"></span><span id="assisesEyebrow">21<sup>e</sup> édition · Édition en cours</span></span>
           <h1 style="margin-top:10px" id="assisesTitre">Les Assises de Conakry, 2026.</h1>
         </div>
+        <div class="assises-logo-slot ph-box" id="assisesLogo" aria-hidden="true"><div class="ph-fill"></div><span class="ph-label" style="inset:auto 8px 8px 8px;font-size:10px;padding:5px 9px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5-5-9 7"/></svg>Logo</span></div>
       </div>
       <p class="lede" style="margin-top:18px" id="assisesTheme">Le grand rendez-vous annuel du réseau : trois volets, un même souffle. La science, la culture et le sport réunissent des centaines d'étudiants venus des huit pays membres. Chaque édition a son identité visuelle et son logo dédié (emplacement réservé ci-dessus).</p>
       <div class="hero-actions" style="margin-top:26px">
@@ -886,6 +900,14 @@
       <div class="section-head"><span class="eyebrow"><span class="dot"></span>Toute l'actualité des Assises</span><h2 style="font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-top:14px" id="assisesNewsTitre">Suivez l'édition 2026, jour après jour.</h2></div>
       <div class="grid-3" id="assisesNews"></div>
     </div>
+  </section>
+
+  <!-- Galerie d'une édition archivée : visible seulement si la fiche a des photos. -->
+  <section class="section" style="padding-top:0" id="assisesGalerieSection" hidden>
+    <div class="wrap">
+      <div class="section-head"><span class="eyebrow"><span class="dot"></span>En images</span><h2 style="font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-top:14px" id="assisesGalerieTitre">L'édition en photos.</h2></div>
+    </div>
+    <div class="galerie" id="assisesGalerie" style="margin-top:8px"></div>
   </section>
 
   <section class="section" style="padding-top:0" id="assisesProgSection">
@@ -1315,6 +1337,32 @@
     // Le fil d'actualités ne concerne que l'édition mise en avant.
     var ns=document.getElementById("assisesNewsSection");
     if(ns) ns.style.display = (assisesVedette && d.id===assisesVedette.id) ? "" : "none";
+
+    // Galerie photos : uniquement pour une édition archivée qui a des photos.
+    var gs=document.getElementById("assisesGalerieSection"), gz=document.getElementById("assisesGalerie");
+    var photos = Array.isArray(d.photos) ? d.photos.filter(Boolean).slice(0,30) : [];
+    if(gs && gz){
+      if(archivee && photos.length){
+        setTxt("assisesGalerieTitre","L'édition de "+(d.ville||"cette année")+" en photos.");
+        gz.innerHTML="";
+        // Trois rangées servies en alternance ; chaque rangée est doublée pour que la
+        // translation de -50% boucle sans couture. Vitesse liée au nombre d'images.
+        var rangees=[[],[],[]];
+        photos.forEach(function(u,i){ rangees[i%3].push(u); });
+        rangees.forEach(function(lot,idx){
+          if(!lot.length) return;
+          var ligne=document.createElement("div");
+          ligne.className="galerie-ligne"+(idx===1?" inverse":"");
+          ligne.style.setProperty("--duree", Math.max(30, lot.length*9)+"s");
+          var imgs=lot.map(function(u){ return '<img src="'+esc(u)+'" alt="" loading="lazy">'; }).join("");
+          ligne.innerHTML=imgs+imgs;
+          gz.appendChild(ligne);
+        });
+        gs.hidden=false;
+      } else {
+        gs.hidden=true; gz.innerHTML="";
+      }
+    }
 
     setTxt("assisesProgEyebrow", archivee ? "Bilan de l'édition" : "Programme indicatif");
     setTxt("assisesProgTitre", archivee

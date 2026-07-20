@@ -310,7 +310,7 @@
       fields:[{k:"titre",l:"Pays / délégation",t:"select",opt:PAYS8,req:true},{k:"image",l:"Photo de la cellule",t:"image"},{k:"texte",l:"Présentation",t:"rich"},{k:"president",l:"Président (nom)",t:"text"},{k:"photo_pres",l:"Photo du président",t:"image"},{k:"tel_pres",l:"Téléphone du président",t:"text"},{k:"mail_pres",l:"Email du président",t:"text"},{k:"sg",l:"Secrétaire général (nom)",t:"text"},{k:"photo_sg",l:"Photo du secrétaire général",t:"image"},{k:"tel_sg",l:"Téléphone du secrétaire général",t:"text"},{k:"mail_sg",l:"Email du secrétaire général",t:"text"},{k:"com",l:"Chargé de communication (nom)",t:"text"},{k:"photo_com",l:"Photo du chargé de communication",t:"image"},{k:"tel_com",l:"Téléphone du chargé de communication",t:"text"},{k:"mail_com",l:"Email du chargé de communication",t:"text"}],
       title:"titre", meta:"president", badge:null },
     assises:{ label:"Éditions Assises", singular:"une édition", icon:ICON.assises,
-      fields:[{k:"titre",l:"Titre de l'édition",t:"text",req:true,ph:"ex. 21es Assises du REMAO"},{k:"numero",l:"Numéro de l'édition",t:"text",req:true,ph:"ex. 21"},{k:"image",l:"Affiche / logo",t:"image"},{k:"ville",l:"Ville hôte",t:"text"},{k:"dates",l:"Dates (texte affiché)",t:"text",ph:"ex. du 13 au 22 octobre 2026"},{k:"date_debut",l:"Date d'ouverture (pilote le compte à rebours)",t:"date"},{k:"theme",l:"Thème",t:"text"},{k:"texte",l:"Programme (édition à venir) ou bilan (édition archivée)",t:"rich"},{k:"statut",l:"Statut",t:"select",opt:["À venir","En cours","Archivée"]},{k:"lien",l:"Lien d'inscription en ligne (laisser vide si l'inscription passe par les cellules)",t:"text"}],
+      fields:[{k:"titre",l:"Titre de l'édition",t:"text",req:true,ph:"ex. 21es Assises du REMAO"},{k:"numero",l:"Numéro de l'édition",t:"text",req:true,ph:"ex. 21"},{k:"image",l:"Affiche / logo",t:"image"},{k:"ville",l:"Ville hôte",t:"text"},{k:"dates",l:"Dates (texte affiché)",t:"text",ph:"ex. du 13 au 22 octobre 2026"},{k:"date_debut",l:"Date d'ouverture (pilote le compte à rebours)",t:"date"},{k:"theme",l:"Thème",t:"text"},{k:"texte",l:"Programme (édition à venir) ou bilan (édition archivée)",t:"rich"},{k:"statut",l:"Statut",t:"select",opt:["À venir","En cours","Archivée"]},{k:"photos",l:"Photos de l'édition (jusqu'à 30, affichées en galerie défilante)",t:"photos",si:{champ:"statut",vaut:"Archivée"}},{k:"lien",l:"Lien d'inscription en ligne (laisser vide si l'inscription passe par les cellules)",t:"text"}],
       title:"titre", meta:"ville", badge:"statut" },
     document:{ label:"Documents", singular:"un document", icon:ICON.document,
       fields:[{k:"titre",l:"Titre du document",t:"text",req:true},{k:"fichier",l:"Fichier PDF",t:"file"},{k:"categorie",l:"Catégorie",t:"select",opt:["Statuts","Règlement intérieur","Compte-rendu","Autre"]}],
@@ -441,6 +441,17 @@
     content.innerHTML='<div class="page-head"><div><h1>'+(id?"Modifier":"Ajouter")+' '+cfg.singular+'</h1><p>Remplis les champs puis publie.</p></div></div><div class="panel"><div style="padding:24px"><form class="form-grid" id="theForm">'+fieldsHTML+
       '<div class="form-actions"><button type="submit" class="btn btn-green" id="saveBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12l5 5L20 6"/></svg>Publier</button><button type="button" class="btn btn-ghost" id="cancel">Annuler</button></div></form></div></div>';
     content.querySelectorAll("[data-drop]").forEach(wireDrop);
+    content.querySelectorAll("[data-photos]").forEach(function(z){ wirePhotos(z,t); });
+    // Champs conditionnels (f.si) : visibles seulement quand le champ pilote a la bonne valeur.
+    cfg.fields.forEach(function(f){
+      if(!f.si) return;
+      var pilote=document.getElementById("f_"+f.si.champ);
+      var zone=(document.getElementById("p_"+f.k)||document.getElementById("f_"+f.k)||document.getElementById("d_"+f.k));
+      if(!pilote||!zone) return;
+      var bloc=zone.closest(".field")||zone;
+      var maj=function(){ bloc.style.display = (pilote.value===f.si.vaut) ? "" : "none"; };
+      pilote.addEventListener("change",maj); maj();
+    });
     content.querySelectorAll(".rich-tool button").forEach(function(b){ b.addEventListener("click",function(){ document.execCommand(b.getAttribute("data-cmd"),false,null); b.closest(".field").querySelector(".rich").focus(); }); });
     document.getElementById("cancel").addEventListener("click",function(){ go("type:"+t); });
     document.getElementById("theForm").addEventListener("submit",async function(e){
@@ -449,6 +460,7 @@
       cfg.fields.forEach(function(f){
         if(f.t==="rich"){ obj[f.k]=document.getElementById("f_"+f.k).innerHTML; }
         else if(f.t==="image"||f.t==="file"){ obj[f.k]=document.getElementById("d_"+f.k).getAttribute("data-val")||""; }
+        else if(f.t==="photos"){ try{ obj[f.k]=JSON.parse(document.getElementById("p_"+f.k).getAttribute("data-photos")||"[]"); }catch(e){ obj[f.k]=[]; } }
         else { var n=document.getElementById("f_"+f.k); obj[f.k]=n?n.value:""; }
       });
       if(!obj[cfg.title]){ toast("Le titre est obligatoire",true); return; }
@@ -463,6 +475,18 @@
     if(f.t==="date") return field(f,'<input class="inp" type="date" id="f_'+f.k+'" value="'+esc(val)+'">');
     if(f.t==="select"){ var o='<option value="">— Choisir —</option>'+f.opt.map(function(x){return '<option'+(x===val?' selected':'')+'>'+esc(x)+'</option>';}).join(""); return field(f,'<select class="inp" id="f_'+f.k+'">'+o+'</select>'); }
     if(f.t==="rich") return field(f,'<div class="rich-tool"><button type="button" data-cmd="bold" style="font-weight:800">B</button><button type="button" data-cmd="italic" style="font-style:italic">I</button><button type="button" data-cmd="insertUnorderedList">&#8226;</button></div><div class="rich" id="f_'+f.k+'" contenteditable="true" data-ph="Rédige ici, comme dans Word...">'+val+'</div>');
+    if(f.t==="photos"){
+      var urls=[]; try{ urls=JSON.parse(val||"[]"); }catch(e){} if(Array.isArray(val)) urls=val;
+      var vignettes=urls.map(function(u){
+        return '<div class="ph-item" style="position:relative"><img src="'+esc(u)+'" style="width:92px;height:92px;object-fit:cover;border-radius:10px;border:1px solid var(--line)">'
+          +'<button type="button" data-retire="'+esc(u)+'" style="position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:none;background:var(--red);color:#fff;cursor:pointer;font-size:13px;line-height:1">&times;</button></div>';
+      }).join("");
+      return field(f,'<div id="p_'+f.k+'" data-photos="'+esc(JSON.stringify(urls))+'">'
+        +'<div class="ph-grid" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px">'+vignettes+'</div>'
+        +'<button type="button" class="btn btn-ghost" data-ajout-photos>Ajouter des photos</button>'
+        +'<span style="font-size:12.5px;color:var(--gray);margin-left:10px" data-compteur>'+urls.length+' / 30</span>'
+        +'<input type="file" accept="image/*" multiple style="display:none"></div>');
+    }
     if(f.t==="image"||f.t==="file"){
       var isImg=f.t==="image";
       var inner=val?(isImg?'<img src="'+esc(val)+'"><span class="change">Changer</span>':'<div style="padding:22px"><b>Fichier ajouté</b><div class="change" style="position:static;display:inline-block;margin-top:8px">Changer</div></div>'):
@@ -472,6 +496,44 @@
     return "";
   }
   function field(f,inner){ return '<div class="field"><label>'+esc(f.l)+(f.req?' <span class="req">*</span>':'')+'</label>'+inner+(f.t==="rich"?'<div class="hint">Éditeur simplifié : gras, italique, listes.</div>':'')+'</div>'; }
+  // Galerie multi-photos (plafond 30). Les URL vivent dans data-photos (JSON).
+  function wirePhotos(zone,t){
+    var MAX=30;
+    var input=zone.querySelector("input[type=file]");
+    var grille=zone.querySelector(".ph-grid");
+    var compteur=zone.querySelector("[data-compteur]");
+    var bouton=zone.querySelector("[data-ajout-photos]");
+    function lire(){ try{ return JSON.parse(zone.getAttribute("data-photos")||"[]"); }catch(e){ return []; } }
+    function ecrire(urls){
+      zone.setAttribute("data-photos",JSON.stringify(urls));
+      if(compteur) compteur.textContent=urls.length+" / "+MAX;
+      grille.innerHTML=urls.map(function(u){
+        return '<div class="ph-item" style="position:relative"><img src="'+esc(u)+'" style="width:92px;height:92px;object-fit:cover;border-radius:10px;border:1px solid var(--line)">'
+          +'<button type="button" data-retire="'+esc(u)+'" style="position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:none;background:var(--red);color:#fff;cursor:pointer;font-size:13px;line-height:1">&times;</button></div>';
+      }).join("");
+    }
+    zone.addEventListener("click",function(e){
+      var r=e.target.closest("[data-retire]");
+      if(r){ ecrire(lire().filter(function(u){ return u!==r.getAttribute("data-retire"); })); return; }
+      if(e.target.closest("[data-ajout-photos]")) input.click();
+    });
+    input.addEventListener("change",async function(){
+      var fichiers=Array.prototype.slice.call(input.files); input.value="";
+      if(!fichiers.length) return;
+      var urls=lire();
+      var place=MAX-urls.length;
+      if(place<=0){ toast("Limite de "+MAX+" photos atteinte",true); return; }
+      if(fichiers.length>place){ fichiers=fichiers.slice(0,place); toast("Limite de "+MAX+" photos : seules les "+place+" premières sont ajoutées",true); }
+      bouton.disabled=true; var libelle=bouton.textContent;
+      for(var i=0;i<fichiers.length;i++){
+        bouton.textContent="Envoi "+(i+1)+" / "+fichiers.length+"…";
+        try{ urls.push(await uploadFile(t+"-galerie",fichiers[i])); ecrire(urls); }
+        catch(err){ showToastErr(err); break; }
+      }
+      bouton.disabled=false; bouton.textContent=libelle;
+    });
+  }
+
   function wireDrop(d){
     var isImg=d.getAttribute("data-drop")==="image";
     var prefix=d.getAttribute("data-prefix")||"medias";
