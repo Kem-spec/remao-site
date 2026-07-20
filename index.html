@@ -1587,6 +1587,12 @@
       var by={}; res.data.forEach(function(r){ (by[r.type]=by[r.type]||[]).push(r); });
 
       if(by.actualite && by.actualite.length){
+        // De la plus récente à la plus ancienne selon la date de l'article (champ « Date »
+        // de l'admin, format AAAA-MM-JJ donc comparable en texte), et non selon l'ordre
+        // de saisie ; les fiches sans date passent en dernier.
+        by.actualite.sort(function(a,b){
+          return String((b.data||{}).date||"").localeCompare(String((a.data||{}).date||""));
+        });
         news.length=0;
         by.actualite.forEach(function(r){ var d=r.data||{};
           news.push({ id:r.id, cat:(d.categorie||"Actualité"), red:(d.categorie==="Communiqué"),
