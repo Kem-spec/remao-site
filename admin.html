@@ -149,6 +149,9 @@
   .rich-tool button{width:32px;height:30px;border-radius:7px;border:1px solid transparent;background:transparent;cursor:pointer;color:var(--ink-soft);font-weight:700;}
   .rich-tool button:hover{background:var(--card);border-color:var(--line);}
   .rich{min-height:130px;padding:12px 14px;border:1px solid var(--line-strong);border-radius:0 0 var(--r-sm) var(--r-sm);background:var(--card);color:var(--ink);overflow-y:auto;}
+  /* Un collage depuis Word ou WhatsApp emporte sa police d'origine : l'éditeur
+     l'affiche déjà dans la police du site, comme le fera la page publique. */
+  .rich, .rich *{font-family:var(--font) !important;}
   .rich:focus{outline:none;border-color:var(--green);}
   .rich:empty:before{content:attr(data-ph);color:var(--gray-soft);}
   .drop{border:1.5px dashed var(--line-strong);border-radius:var(--r-md);padding:22px;text-align:center;cursor:pointer;transition:border-color .3s,background .3s;color:var(--gray);position:relative;}
