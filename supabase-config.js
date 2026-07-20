@@ -1,4 +1,5 @@
 // Configuration Supabase du REMAO
+// Projet institutionnel du réseau (organisation REMAOWAMS).
 // La clé "publishable" est publique par conception (protégée par les règles RLS).
-window.SUPA_URL = "https://tfsumqrvqfbjpbuqhxrs.supabase.co";
-window.SUPA_KEY = "sb_publishable_3lxVbDUkuD9nE6AXWq-Xuw_9XD7WIMx";
+window.SUPA_URL = "https://aohfgaxmahcowatzlvyi.supabase.co";
+window.SUPA_KEY = "sb_publishable_bfWCYqCL1Xz85HkwfePdxQ_Bcwi6PSX";
