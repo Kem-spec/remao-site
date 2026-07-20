@@ -1689,6 +1689,8 @@
             if(!m) return;
             var nomEl=carte.querySelector("b"), row=carte.querySelector(".contact-row");
             if(nomEl && m.titre) nomEl.textContent=m.titre;
+            var av=carte.querySelector(".av");
+            if(av && m.image){ av.outerHTML=avatarHtml(m.image, av.textContent, m.titre); poserPhotos(carte); }
             if(row) row.remove();
             carte.insertAdjacentHTML("beforeend", contactChipsFor(m.tel||"", m.mail||""));
             trouve=true;
