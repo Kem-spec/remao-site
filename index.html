@@ -881,16 +881,16 @@
     </div>
   </section>
 
-  <section class="section" style="padding-top:0">
+  <section class="section" style="padding-top:0" id="assisesNewsSection">
     <div class="wrap">
-      <div class="section-head"><span class="eyebrow"><span class="dot"></span>Toute l'actualité des Assises</span><h2 style="font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-top:14px">Suivez l'édition 2026, jour après jour.</h2></div>
+      <div class="section-head"><span class="eyebrow"><span class="dot"></span>Toute l'actualité des Assises</span><h2 style="font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-top:14px" id="assisesNewsTitre">Suivez l'édition 2026, jour après jour.</h2></div>
       <div class="grid-3" id="assisesNews"></div>
     </div>
   </section>
 
-  <section class="section" style="padding-top:0">
+  <section class="section" style="padding-top:0" id="assisesProgSection">
     <div class="wrap">
-      <div class="section-head"><span class="eyebrow"><span class="dot"></span>Programme indicatif</span><h2 style="font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-top:14px">Une semaine, trois temps forts.</h2></div>
+      <div class="section-head"><span class="eyebrow"><span class="dot"></span><span id="assisesProgEyebrow">Programme indicatif</span></span><h2 style="font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-top:14px" id="assisesProgTitre">Une semaine, trois temps forts.</h2></div>
       <div class="prog" id="assisesProg">
         <div class="prog-row"><span class="day">Jour 1-2</span><div><b>Ouverture & journées scientifiques</b><p>Cérémonie d'ouverture, communications, ateliers et conférences des invités.</p></div></div>
         <div class="prog-row"><span class="day">Jour 3-4</span><div><b>Compétitions sportives & Génie Médical</b><p>Football, basketball, handball, lutte, et le concours de connaissances médicales entre délégations.</p></div></div>
@@ -903,8 +903,10 @@
   <section class="section" style="padding-top:0">
     <div class="wrap">
       <div class="section-head"><span class="eyebrow"><span class="dot"></span>Mémoire du réseau</span><h2 style="font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-top:14px">Éditions précédentes</h2></div>
-      <div class="grid-3">
-        <div class="card" style="padding:26px"><div style="font-family:var(--font-mono);font-size:30px;font-weight:700;color:var(--green)">20<sup>e</sup></div><b style="display:block;margin-top:8px">Thiès, Sénégal</b><small style="color:var(--gray)">Septembre 2025</small></div>
+      <!-- Rempli depuis l'admin : toutes les éditions sauf celle affichée. Repli ci-dessous. -->
+      <div class="grid-3" id="editionsList" style="display:none"></div>
+      <div class="grid-3" id="editionsFallback">
+        <div class="card" style="padding:26px"><div style="font-family:var(--font-mono);font-size:30px;font-weight:700;color:var(--green)">20<sup>e</sup></div><b style="display:block;margin-top:8px">Thiès, Sénégal</b><small style="color:var(--gray)">Du 8 au 17 septembre 2025</small></div>
         <div class="card" style="padding:26px"><div style="font-family:var(--font-mono);font-size:30px;font-weight:700;color:var(--green)">19<sup>e</sup></div><b style="display:block;margin-top:8px">Bouaké, Côte d'Ivoire</b><small style="color:var(--gray)">Édition précédente</small></div>
         <div class="card" style="padding:26px"><div style="font-family:var(--font-mono);font-size:30px;font-weight:700;color:var(--red)">18<sup>e</sup></div><b style="display:block;margin-top:8px">Niamey, Niger</b><small style="color:var(--gray)">2022</small></div>
       </div>
@@ -1257,6 +1259,105 @@
   }
   tick(); setInterval(tick,1000);
 
+  /* ---------- Éditions des Assises ----------
+     La page Assises sert toutes les éditions : celle en cours comme les archives.
+     Une édition archivée n'a ni compte à rebours ni inscription, mais un bilan. */
+  var assisesParId={}, assisesListe=[], assisesVedette=null, assisesCourante=null;
+  function setTxt(id,val){ var el=document.getElementById(id); if(el && val) el.textContent=val; }
+  // Définie ici et non dans le chargeur Supabase : renderAssises s'en sert, et une
+  // ReferenceError dans une promesse passe totalement inaperçue.
+  function strip(html){ var t=document.createElement("div"); t.innerHTML=html||""; return (t.textContent||"").replace(/\s+/g," ").trim(); }
+
+  function renderAssises(d){
+    if(!d) return;
+    assisesCourante = d;
+    var archivee = d.statut==="Archivée";
+    setTxt("assisesTitre", d.titre);
+    setTxt("assisesVille", d.ville);
+    setTxt("assisesDates", d.dates);
+    setTxt("assisesTheme", d.theme);
+
+    var eb=document.getElementById("assisesEyebrow");
+    if(eb){
+      var bout=[];
+      if(d.numero) bout.push(d.numero+"e édition");
+      if(d.ville) bout.push(d.ville);
+      if(d.statut) bout.push(d.statut);
+      if(bout.length) eb.textContent=bout.join(" · ");
+    }
+
+    var slot=document.getElementById("assisesLogo");
+    if(slot && d.image){
+      slot.classList.remove("ph-box");
+      slot.innerHTML='<img src="'+esc(d.image)+'" alt="Affiche de l\'édition" style="width:100%;height:100%;object-fit:cover;border-radius:22px">';
+    }
+
+    // Compte à rebours et inscription : sans objet sur une édition passée.
+    var cd=document.getElementById("countdown2");
+    if(cd) cd.style.display = archivee ? "none" : "";
+    var cta=document.getElementById("assisesCta");
+    if(cta){
+      if(archivee){ cta.style.display="none"; }
+      else {
+        cta.style.display="";
+        if(d.lien){
+          cta.innerHTML="S'inscrire aux Assises"+FLECHE;
+          cta.href=d.lien; cta.target="_blank"; cta.rel="noopener"; cta.removeAttribute("data-view");
+        } else {
+          cta.innerHTML="Inscrivez-vous auprès de votre cellule nationale"+FLECHE;
+          cta.removeAttribute("href"); cta.removeAttribute("target"); cta.removeAttribute("rel");
+          cta.setAttribute("data-view","membre");
+        }
+      }
+    }
+    if(!archivee) majDateAssises(d.date_debut);
+
+    // Le fil d'actualités ne concerne que l'édition mise en avant.
+    var ns=document.getElementById("assisesNewsSection");
+    if(ns) ns.style.display = (assisesVedette && d.id===assisesVedette.id) ? "" : "none";
+
+    setTxt("assisesProgEyebrow", archivee ? "Bilan de l'édition" : "Programme indicatif");
+    setTxt("assisesProgTitre", archivee
+      ? ("Ce qu'il faut retenir de l'édition de "+(d.ville||"cette édition")+".")
+      : "Une semaine, trois temps forts.");
+    var prog=document.getElementById("assisesProg");
+    if(prog && d.texte && strip(d.texte)){
+      prog.innerHTML='<div class="prog-row" style="display:block"><div>'+d.texte+'</div></div>';
+    }
+    var ps=document.getElementById("assisesProgSection");
+    if(ps) ps.style.display = (archivee && !(d.texte && strip(d.texte))) ? "none" : "";
+  }
+
+  function renderEditions(){
+    var liste=document.getElementById("editionsList"), fb=document.getElementById("editionsFallback");
+    if(!liste) return;
+    // On se fie à l'édition réellement affichée, pas à history.state : l'état de
+    // l'historique n'est pas garanti au moment où le chargement Supabase se termine.
+    var courante = assisesCourante && assisesCourante.id;
+    var autres = assisesListe.filter(function(d){ return d.id!==courante; });
+    if(!autres.length){ liste.style.display="none"; if(fb) fb.style.display=""; return; }
+    liste.innerHTML="";
+    autres.forEach(function(d){
+      var b=document.createElement("button");
+      b.className="card"; b.type="button";
+      b.setAttribute("style","padding:26px;text-align:left;cursor:pointer;font:inherit;color:inherit;width:100%");
+      b.innerHTML='<div style="font-family:var(--font-mono);font-size:30px;font-weight:700;color:var(--green)">'
+        +esc(d.numero||"?")+'<sup>e</sup></div>'
+        +'<b style="display:block;margin-top:8px">'+esc(d.ville||d.titre||"Édition")+'</b>'
+        +'<small style="color:var(--gray)">'+esc(d.dates||d.statut||"")+'</small>';
+      b.addEventListener("click", function(){ openAssises(d.id); });
+      liste.appendChild(b);
+    });
+    liste.style.display=""; if(fb) fb.style.display="none";
+  }
+
+  function openAssises(id, opts){
+    var d=assisesParId[id]; if(!d) return;
+    renderAssises(d);
+    showView("assises", { param:id, fromHistory:!!(opts&&opts.fromHistory) });
+    renderEditions();
+  }
+
   /* ---------- Router ---------- */
   var views = { home:"view-home", qsn:"view-qsn", assises:"view-assises", actualites:"view-actualites",
     article:"view-article", pays:"view-pays", membre:"view-membre", cellule:"view-cellule" };
@@ -1287,6 +1388,14 @@
     if(!etat || !etat.vue || !views[etat.vue]) { showView("home",{fromHistory:true}); return; }
     if(etat.vue==="pays" && etat.param) return openCountry(etat.param,{fromHistory:true});
     if(etat.vue==="article" && etat.param) return openArticle(etat.param,{fromHistory:true});
+    if(etat.vue==="assises"){
+      // Sans paramètre, ou si l'édition n'est pas encore chargée, on revient à la vedette.
+      var d = etat.param && assisesParId[etat.param];
+      if(d){ renderAssises(d); } else if(assisesVedette){ renderAssises(assisesVedette); }
+      showView("assises",{fromHistory:true});
+      renderEditions();
+      return;
+    }
     showView(etat.vue,{fromHistory:true});
   }
   window.addEventListener("popstate", function(e){ allerVers(e.state || etatDepuisHash()); });
@@ -1363,7 +1472,14 @@
   document.addEventListener("click", function(e){
     var v = e.target.closest("[data-view]");
     var h = e.target.closest("[data-nav='home']");
-    if(v){ e.preventDefault(); showView(v.getAttribute("data-view")); return; }
+    if(v){
+      e.preventDefault();
+      var cible=v.getAttribute("data-view");
+      // Le menu « Assises » ramène toujours à l'édition mise en avant, même si l'on
+      // consultait une archive juste avant.
+      if(cible==="assises" && assisesVedette){ return openAssises(assisesVedette.id); }
+      showView(cible); return;
+    }
     if(h){
       e.preventDefault(); var tgt = h.getAttribute("data-scroll-target");
       showView("home", { noScroll: !!tgt });
@@ -1386,7 +1502,6 @@
     var SB = window.supabase.createClient(window.SUPA_URL, window.SUPA_KEY);
     var MOIS=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
     function fmtDate(d){ if(!d) return ""; var p=String(d).split("-"); if(p.length<3) return d; return parseInt(p[2],10)+" "+MOIS[parseInt(p[1],10)-1]+" "+p[0]; }
-    function strip(html){ var t=document.createElement("div"); t.innerHTML=html||""; return (t.textContent||"").replace(/\s+/g," ").trim(); }
     var nameToCode={}; Object.keys(countries).forEach(function(k){ nameToCode[countries[k].name]=k; });
 
     SB.from("contenus").select("*").order("created_at",{ascending:false}).then(function(res){
@@ -1545,48 +1660,33 @@
         }
       }
 
-      /* --- Édition des Assises (celle « En cours », sinon « À venir », sinon la plus récente) --- */
+      /* --- Éditions des Assises --- */
       if(by.assises && by.assises.length){
-        var pick=null, order=["En cours","À venir"];
-        for(var i=0;i<order.length && !pick;i++){
-          pick=by.assises.filter(function(r){ return (r.data||{}).statut===order[i]; })[0]||null;
-        }
-        if(!pick) pick=by.assises[0];
-        var a=pick.data||{};
-        var setTxt=function(id,val){ var el=document.getElementById(id); if(el && val) el.textContent=val; };
+        assisesParId={}; assisesListe=[];
+        by.assises.forEach(function(r){ var d=r.data||{}; d.id=r.id; assisesParId[r.id]=d; assisesListe.push(d); });
+        // Numéro décroissant : la mémoire du réseau se lit de la plus récente à la plus ancienne.
+        assisesListe.sort(function(x,y){ return (parseInt(y.numero,10)||0)-(parseInt(x.numero,10)||0); });
 
-        setTxt("assisesTitre", a.titre);
-        setTxt("assisesVille", a.ville);
-        setTxt("assisesDates", a.dates);
-        setTxt("assisesTheme", a.theme);
-        setTxt("homeAssisesTitre", a.titre);
-        setTxt("homeAssisesVille", a.ville);
-        setTxt("homeAssisesDates", a.dates);
-        setTxt("homeAssisesTheme", a.theme);
-
-        var eb=document.getElementById("assisesEyebrow");
-        if(eb && (a.ville||a.statut)) eb.textContent=[a.ville,a.statut].filter(Boolean).join(" · ");
-
-        if(a.image){
-          var slot=document.getElementById("assisesLogo");
-          if(slot){ slot.classList.remove("ph-box");
-            slot.innerHTML='<img src="'+esc(a.image)+'" alt="Affiche de l\'édition" style="width:100%;height:100%;object-fit:cover;border-radius:22px">'; }
+        // Édition mise en avant : « En cours », sinon « À venir », sinon la plus récente.
+        var vedette=null, prio=["En cours","À venir"];
+        for(var i=0;i<prio.length && !vedette;i++){
+          vedette=assisesListe.filter(function(d){ return d.statut===prio[i]; })[0]||null;
         }
-        majDateAssises(a.date_debut);
+        if(!vedette) vedette=assisesListe[0];
+        assisesVedette=vedette;
 
-        // Par défaut on n'inscrit pas en ligne : on renvoie vers la page qui liste les
-        // cellules nationales et leurs contacts. Le lien externe ne sert que s'il est rempli.
-        var cta=document.getElementById("assisesCta");
-        if(cta && a.lien){
-          cta.textContent="S'inscrire aux Assises";
-          cta.href=a.lien; cta.target="_blank"; cta.rel="noopener";
-          cta.onclick=null; cta.removeAttribute("onclick"); cta.removeAttribute("data-view");
-          cta.insertAdjacentHTML("beforeend", FLECHE);
+        if(vedette){
+          setTxt("homeAssisesTitre", vedette.titre);
+          setTxt("homeAssisesVille", vedette.ville);
+          setTxt("homeAssisesDates", vedette.dates);
+          setTxt("homeAssisesTheme", vedette.theme);
+          majDateAssises(vedette.date_debut);
         }
-        if(a.texte && strip(a.texte)){
-          var prog=document.getElementById("assisesProg");
-          if(prog) prog.innerHTML='<div class="prog-row" style="display:block"><div>'+a.texte+'</div></div>';
-        }
+
+        // Si on est déjà sur une édition précise (lien direct), on la garde.
+        var et=history.state;
+        renderAssises((et && et.vue==="assises" && et.param && assisesParId[et.param]) ? assisesParId[et.param] : vedette);
+        renderEditions();
       }
     });
   })();
