@@ -330,8 +330,7 @@
               {k:"auteurs",l:"Auteur(s)",t:"text",ph:"ex. KOUAMÉ A., DIALLO M., TRAORÉ S."},
               {k:"assises_id",l:"Édition des Assises",t:"ref",ref:"assises",lk:"assises_label"},
               {k:"categorie",l:"Type de travail",t:"select",opt:["Communication scientifique","Poster","Communication libre","Article scientifique","Mémoire / thèse","Revue de littérature","Rapport d'étude","Autre"]},
-              {k:"pays",l:"Cellule / délégation",t:"select",opt:PAYS8},
-              {k:"etablissement",l:"Faculté ou université",t:"text",ph:"ex. Université La Source, Conakry"},
+              {k:"pays",l:"Cellule REMAO (pays)",t:"select",opt:PAYS8},
               {k:"resume",l:"Résumé",t:"rich"},
               {k:"fichier",l:"Document PDF",t:"file"},
               {k:"date",l:"Date de présentation",t:"date"}],
@@ -662,7 +661,7 @@
     var extra="";
     if(t==="pays"){ extra='<div class="prev-body">'+(it.texte||"")+'</div><p><b>Président :</b> '+esc(it.president||"—")+' · '+esc(it.tel_pres||"tél. à compléter")+'</p><p><b>Secrétaire général :</b> '+esc(it.sg||"—")+'</p><p><b>Chargé de com. :</b> '+esc(it.com||"—")+'</p>'; }
     else if(t==="assises"){ extra='<p><b>Ville :</b> '+esc(it.ville||"—")+' · '+esc(it.dates||"")+'</p><p><b>Thème :</b> '+esc(it.theme||"—")+'</p><div class="prev-body">'+(it.texte||"")+'</div>'; }
-    else if(t==="publication"){ extra='<p><b>Auteur(s) :</b> '+esc(it.auteurs||"—")+'</p><p><b>Édition :</b> '+esc(it.assises_label||"—")+'</p><p><b>Cellule :</b> '+esc(it.pays||"—")+(it.etablissement?' · '+esc(it.etablissement):'')+'</p>'+(it.resume?'<div class="prev-body">'+it.resume+'</div>':'')+(it.fichier?'<p><b>Document :</b> <a href="'+esc(it.fichier)+'" target="_blank" rel="noopener">ouvrir le PDF</a></p>':'<p style="color:var(--red)"><b>Aucun PDF joint.</b></p>'); }
+    else if(t==="publication"){ extra='<p><b>Auteur(s) :</b> '+esc(it.auteurs||"—")+'</p><p><b>Édition :</b> '+esc(it.assises_label||"—")+'</p><p><b>Cellule :</b> '+(it.pays?"Cellule REMAO "+esc(it.pays):"—")+'</p>'+(it.resume?'<div class="prev-body">'+it.resume+'</div>':'')+(it.fichier?'<p><b>Document :</b> <a href="'+esc(it.fichier)+'" target="_blank" rel="noopener">ouvrir le PDF</a></p>':'<p style="color:var(--red)"><b>Aucun PDF joint.</b></p>'); }
     else if(it.texte){ extra='<div class="prev-body">'+it.texte+'</div>'; }
     else if(it.lien){ extra='<p><b>Lien :</b> '+esc(it.lien)+'</p>'; }
     document.getElementById("modalTitle").textContent="Aperçu · "+cfg.label;

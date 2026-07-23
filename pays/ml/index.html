@@ -1519,7 +1519,7 @@
     var el=document.createElement("button");
     el.className="card pub-card"; el.type="button";
     var bas=[];
-    if(p.pays) bas.push(esc(p.pays));
+    if(p.pays) bas.push("Cellule "+esc(p.pays));
     if(p.fichier) bas.push('<span class="pub-pdf">PDF</span>');
     bas.push("Lire le résumé");
     el.innerHTML='<div><span class="article-cat">'+esc(p.categorie||"Travail")+'</span></div>'
@@ -1590,7 +1590,9 @@
     document.getElementById("pubCat").textContent=p.categorie||"Communication";
     document.getElementById("pubEdition").textContent=[pubEditionLibelle(p), p.dateAff].filter(Boolean).join(" · ");
     document.getElementById("pubAuteurs").textContent=p.auteurs||"";
-    document.getElementById("pubAffiliation").textContent=[p.etablissement, p.pays].filter(Boolean).join(" · ");
+    // Un travail est signé par une délégation du réseau, pas par une faculté : c'est
+    // la cellule nationale qui l'a présenté aux Assises.
+    document.getElementById("pubAffiliation").textContent = p.pays ? ("Cellule REMAO "+p.pays) : "";
     var fz=document.getElementById("pubFichierZone");
     if(p.fichier){ document.getElementById("pubFichier").href=p.fichier; fz.hidden=false; } else { fz.hidden=true; }
     var rz=document.getElementById("pubResumeZone"), r=document.getElementById("pubResume");
@@ -1977,7 +1979,7 @@
       if(by.publication && by.publication.length){
         publications.length=0; pubParId={};
         by.publication.forEach(function(r){ var d=r.data||{};
-          var p={ id:r.id, titre:d.titre||"", auteurs:d.auteurs||"", etablissement:d.etablissement||"",
+          var p={ id:r.id, titre:d.titre||"", auteurs:d.auteurs||"",
                   pays:d.pays||"", categorie:d.categorie||"", resume:d.resume||"", fichier:d.fichier||"",
                   assises_id:d.assises_id||"", assises_label:d.assises_label||"",
                   date:d.date||"", dateAff:fmtDate(d.date) };
