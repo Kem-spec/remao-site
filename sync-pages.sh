@@ -9,7 +9,7 @@
 # A EXECUTER APRES CHAQUE MODIFICATION D'index.html.
 cd "$(dirname "$0")" || exit 1
 
-VUES="qui-sommes-nous assises actualites devenir-membre creer-une-cellule"
+VUES="qui-sommes-nous assises revue actualites devenir-membre creer-une-cellule"
 PAYS="bj bf ci gn ml ne sn tg"
 
 cp index.html 404.html

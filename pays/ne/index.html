@@ -511,6 +511,27 @@
     .cd-cell { padding:16px 6px; }
     .join, .about-media { border-radius:24px; }
   }
+  /* ---- Revue scientifique : travaux des étudiants, rangés par édition des Assises ---- */
+  .revue-filtres { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:40px; }
+  .revue-filtres button { font-family:var(--font-body); font-size:13px; font-weight:600; padding:9px 16px;
+    border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft);
+    cursor:pointer; transition:background .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease); }
+  .revue-filtres button:hover { border-color:var(--green); color:var(--ink); }
+  .revue-filtres button.on { background:var(--green); border-color:var(--green); color:#fff; }
+  .revue-groupe { margin-bottom:56px; }
+  .revue-groupe:last-child { margin-bottom:0; }
+  .revue-groupe .rg-head { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+    padding-bottom:14px; margin-bottom:24px; border-bottom:1px solid var(--line); }
+  .revue-groupe .rg-head h3 { font-size:22px; font-weight:800; }
+  .revue-groupe .rg-head small { color:var(--gray); font-size:13px; }
+  .pub-card { padding:26px 24px; text-align:left; cursor:pointer; font:inherit; color:inherit;
+    width:100%; display:flex; flex-direction:column; gap:12px; }
+  .pub-card h4 { font-size:17.5px; font-weight:700; line-height:1.35; letter-spacing:-0.01em; }
+  .pub-card .pub-aut { color:var(--ink-soft); font-size:14px; margin:0; }
+  .pub-card .pub-bas { margin-top:auto; padding-top:4px; color:var(--gray); font-size:12.5px;
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .pub-card .pub-pdf { color:var(--green); font-weight:600; }
+  .pub-meta { display:flex; align-items:center; gap:12px; flex-wrap:wrap; color:var(--gray); font-size:14px; margin:12px 0 4px; }
   /* Écrans tactiles : pas d'effet de survol qui « colle » après le tap */
   @media (hover:none){
     .card:hover, .stat:hover, .country:hover, .news-card:hover,
@@ -532,6 +553,7 @@
       <a data-view="qsn">Qui sommes-nous</a>
       <a data-nav="home" data-scroll-target="pays">Nos pays</a>
       <a data-view="assises">Assises</a>
+      <a data-view="revue">Revue</a>
       <a data-view="actualites">Actualités</a>
     </div>
     <div class="nav-cta">
@@ -551,6 +573,7 @@
   <a data-view="qsn">Qui sommes-nous</a>
   <a data-nav="home" data-scroll-target="pays">Nos pays membres</a>
   <a data-view="assises">Assises du REMAO</a>
+  <a data-view="revue">Revue scientifique</a>
   <a data-view="actualites">Actualités</a>
   <a data-view="membre">Rejoindre le réseau</a>
   <a data-nav="home" data-scroll-target="contact">Contact</a>
@@ -932,6 +955,16 @@
     </div>
   </section>
 
+  <!-- Travaux scientifiques de l'édition affichée. Masquée tant que cette édition n'en a aucun. -->
+  <section class="section" style="padding-top:0" id="assisesRevueSection" hidden>
+    <div class="wrap">
+      <div class="section-head"><span class="eyebrow"><span class="dot"></span>Communication scientifique</span><h2 style="font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-top:14px">Les travaux de cette édition.</h2><p>Communications, posters et mémoires présentés par les délégations.</p></div>
+      <div class="grid-3" id="assisesRevue"></div>
+      <div style="margin-top:28px"><a class="btn btn-ghost" data-view="revue">Voir toute la revue
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></div>
+    </div>
+  </section>
+
   <section class="section" style="padding-top:0">
     <div class="wrap">
       <div class="section-head"><span class="eyebrow"><span class="dot"></span>Mémoire du réseau</span><h2 style="font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-top:14px">Éditions précédentes</h2></div>
@@ -969,6 +1002,55 @@
       <div class="article-hero" aria-hidden="true"><div class="scene" id="artScene"></div></div>
       <div class="article-body contenu-admin" id="artBody"></div>
       <div style="margin-top:36px"><a class="btn btn-ghost" data-view="actualites">Retour aux actualités <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span></a></div>
+    </div>
+  </section>
+</div>
+
+<!-- =================== REVUE (liste des travaux scientifiques) ===================
+     Rempli depuis l'admin (type « Revue scientifique »). Les travaux sont groupés par
+     édition des Assises : c'est ainsi que le réseau les archive et les cite. -->
+<div id="view-revue" class="view">
+  <section class="section subhero">
+    <div class="wrap">
+      <div class="breadcrumb"><a data-nav="home">Accueil</a> <span>/</span> <span>Revue scientifique</span></div>
+      <span class="eyebrow"><span class="dot"></span>Communication scientifique</span>
+      <h1>La Revue du REMAO.</h1>
+      <p class="lede">Les travaux présentés par les étudiants lors des Assises : communications orales, posters, mémoires et articles. Consultables et téléchargeables librement, édition par édition.</p>
+    </div>
+  </section>
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="revue-filtres" id="revueFiltres"></div>
+      <div id="revueGroupes"></div>
+      <!-- Tant qu'aucun travail n'est publié : on le dit, plutôt que d'afficher une page vide. -->
+      <div id="revueVide" class="card" style="padding:44px 30px;text-align:center">
+        <b style="display:block;font-size:18px">Aucun travail publié pour le moment.</b>
+        <p style="color:var(--gray);margin:12px auto 22px;max-width:52ch">Les communications scientifiques des Assises seront mises en ligne ici. Cellules et auteurs : transmettez vos travaux à la Commission E (communication et relations extérieures).</p>
+        <a class="btn btn-ghost" data-view="membre">Contacter le réseau
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- =================== PUBLICATION (fiche d'un travail) =================== -->
+<div id="view-publication" class="view">
+  <section class="section subhero">
+    <div class="wrap" style="max-width:860px">
+      <div class="breadcrumb"><a data-nav="home">Accueil</a> <span>/</span> <a data-view="revue">Revue scientifique</a> <span>/</span> <span id="pubCrumb">Travail</span></div>
+      <div class="pub-meta"><span class="article-cat" id="pubCat">Communication</span><span id="pubEdition">—</span></div>
+      <h1 id="pubTitre" style="font-size:clamp(26px,3.8vw,42px);margin:14px 0 18px">Titre du travail</h1>
+      <p id="pubAuteurs" style="font-size:17px;color:var(--ink-soft);margin:0"></p>
+      <p id="pubAffiliation" style="color:var(--gray);font-size:14.5px;margin:8px 0 0"></p>
+      <div id="pubFichierZone" style="margin:30px 0 0" hidden>
+        <a class="btn btn-green" id="pubFichier" target="_blank" rel="noopener">Télécharger le document (PDF)
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v12M8 11l4 4 4-4M4 19h16"/></svg></span></a>
+      </div>
+      <div id="pubResumeZone" style="margin-top:34px" hidden>
+        <h2 style="font-size:20px;font-weight:800;margin-bottom:12px">Résumé</h2>
+        <div class="article-body contenu-admin" id="pubResume"></div>
+      </div>
+      <div style="margin-top:36px"><a class="btn btn-ghost" data-view="revue">Retour à la revue <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></span></a></div>
     </div>
   </section>
 </div>
@@ -1067,7 +1149,7 @@
         </div>
       </div>
       <div class="foot-col"><h4>Le réseau</h4><a data-view="qsn">Qui sommes-nous</a><a data-nav="home" data-scroll-target="pays">Nos pays membres</a><a data-nav="home" data-scroll-target="programmes">Programmes</a><a data-view="qsn">Bureau Exécutif</a></div>
-      <div class="foot-col"><h4>S'engager</h4><a data-view="assises">Assises 2026</a><a data-view="membre">Devenir membre</a><a data-view="cellule">Créer une cellule</a><a data-view="actualites">Actualités</a></div>
+      <div class="foot-col"><h4>S'engager</h4><a data-view="assises">Assises 2026</a><a data-view="revue">Revue scientifique</a><a data-view="membre">Devenir membre</a><a data-view="cellule">Créer une cellule</a><a data-view="actualites">Actualités</a></div>
       <div class="foot-col"><h4>Contact</h4><a href="mailto:remao.wams@gmail.com">remao.wams@gmail.com</a><a href="tel:+22799320761">+227 99 32 07 61</a><span>Siège : Niamey, Niger</span></div>
     </div>
     <div class="foot-bottom"><span>© 2026 REMAO · WAMS-Web. Tous droits réservés.</span></div>
@@ -1396,6 +1478,8 @@
     }
     var ps=document.getElementById("assisesProgSection");
     if(ps) ps.style.display = (archivee && !(d.texte && strip(d.texte))) ? "none" : "";
+
+    renderAssisesRevue(d);
   }
 
   function renderEditions(){
@@ -1421,6 +1505,109 @@
     liste.style.display=""; if(fb) fb.style.display="none";
   }
 
+  /* ---------- Revue scientifique ----------
+     Les travaux présentés par les étudiants, saisis dans l'admin et rattachés à une
+     édition des Assises. Le classement par édition est celui du réseau : un travail
+     se cite par l'édition où il a été présenté, pas par sa date de mise en ligne. */
+  var publications=[], pubParId={}, revueFiltre="tous";
+
+  function pubEdition(p){ return (p.assises_id && assisesParId[p.assises_id]) || null; }
+  function pubEditionCle(p){ return pubEdition(p) ? p.assises_id : "autres"; }
+  function pubEditionLibelle(p){
+    var d=pubEdition(p);
+    if(d) return d.titre || ((d.numero||"?")+"es Assises");
+    // Édition supprimée ou travail hors Assises : on garde le libellé figé à la saisie.
+    return p.assises_label || "Hors Assises";
+  }
+  // Numéro d'édition décroissant. Sans édition rattachée, le groupe ferme la marche.
+  function pubEditionRang(p){ var d=pubEdition(p); return d ? (parseInt(d.numero,10)||0) : -1; }
+
+  function pubCardEl(p){
+    var el=document.createElement("button");
+    el.className="card pub-card"; el.type="button";
+    var bas=[];
+    if(p.pays) bas.push(esc(p.pays));
+    if(p.fichier) bas.push('<span class="pub-pdf">PDF</span>');
+    bas.push("Lire le résumé");
+    el.innerHTML='<div><span class="article-cat">'+esc(p.categorie||"Travail")+'</span></div>'
+      +'<h4>'+esc(p.titre||"(sans titre)")+'</h4>'
+      +(p.auteurs?'<p class="pub-aut">'+esc(p.auteurs)+'</p>':'')
+      +'<div class="pub-bas">'+bas.join(' <span aria-hidden="true">·</span> ')+'</div>';
+    el.addEventListener("click", function(){ openPublication(p.id); });
+    return el;
+  }
+
+  function renderRevue(){
+    var zoneG=document.getElementById("revueGroupes"),
+        zoneF=document.getElementById("revueFiltres"),
+        vide=document.getElementById("revueVide");
+    if(!zoneG || !zoneF) return;
+    if(!publications.length){ zoneG.innerHTML=""; zoneF.innerHTML=""; if(vide) vide.hidden=false; return; }
+    if(vide) vide.hidden=true;
+
+    var groupes={}, cles=[];
+    publications.forEach(function(p){
+      var k=pubEditionCle(p);
+      if(!groupes[k]){ groupes[k]={ cle:k, libelle:pubEditionLibelle(p), rang:pubEditionRang(p), items:[] }; cles.push(k); }
+      groupes[k].items.push(p);
+    });
+    cles.sort(function(a,b){ return groupes[b].rang-groupes[a].rang; });
+
+    // Le filtre retenu peut viser une édition qui n'a plus de travaux : on retombe sur tout.
+    if(revueFiltre!=="tous" && cles.indexOf(revueFiltre)===-1) revueFiltre="tous";
+
+    zoneF.innerHTML="";
+    var boutons=[{ cle:"tous", libelle:"Toutes les éditions", n:publications.length }]
+      .concat(cles.map(function(k){ return { cle:k, libelle:groupes[k].libelle, n:groupes[k].items.length }; }));
+    boutons.forEach(function(b){
+      var el=document.createElement("button");
+      el.type="button";
+      el.className=(b.cle===revueFiltre?"on":"");
+      el.textContent=b.libelle+" ("+b.n+")";
+      el.addEventListener("click", function(){ revueFiltre=b.cle; renderRevue(); });
+      zoneF.appendChild(el);
+    });
+
+    zoneG.innerHTML="";
+    cles.filter(function(k){ return revueFiltre==="tous" || k===revueFiltre; }).forEach(function(k){
+      var g=groupes[k];
+      var sec=document.createElement("div"); sec.className="revue-groupe";
+      var head=document.createElement("div"); head.className="rg-head";
+      head.innerHTML='<h3>'+esc(g.libelle)+'</h3><small>'+g.items.length+(g.items.length>1?" travaux":" travail")+'</small>';
+      var grille=document.createElement("div"); grille.className="grid-3";
+      g.items.forEach(function(p){ grille.appendChild(pubCardEl(p)); });
+      sec.appendChild(head); sec.appendChild(grille);
+      zoneG.appendChild(sec);
+    });
+  }
+
+  // Aperçu des travaux sur la page de l'édition consultée.
+  function renderAssisesRevue(d){
+    var sec=document.getElementById("assisesRevueSection"), zone=document.getElementById("assisesRevue");
+    if(!sec || !zone) return;
+    var lot = d ? publications.filter(function(p){ return p.assises_id===d.id; }) : [];
+    zone.innerHTML="";
+    if(!lot.length){ sec.hidden=true; return; }
+    lot.slice(0,6).forEach(function(p){ zone.appendChild(pubCardEl(p)); });
+    sec.hidden=false;
+  }
+
+  function openPublication(id, opts){
+    var p=pubParId[id]; if(!p) return;
+    document.getElementById("pubCrumb").textContent=p.titre||"Travail";
+    document.getElementById("pubTitre").textContent=p.titre||"Travail";
+    document.getElementById("pubCat").textContent=p.categorie||"Communication";
+    document.getElementById("pubEdition").textContent=[pubEditionLibelle(p), p.dateAff].filter(Boolean).join(" · ");
+    document.getElementById("pubAuteurs").textContent=p.auteurs||"";
+    document.getElementById("pubAffiliation").textContent=[p.etablissement, p.pays].filter(Boolean).join(" · ");
+    var fz=document.getElementById("pubFichierZone");
+    if(p.fichier){ document.getElementById("pubFichier").href=p.fichier; fz.hidden=false; } else { fz.hidden=true; }
+    var rz=document.getElementById("pubResumeZone"), r=document.getElementById("pubResume");
+    var html=nettoyerHtml(p.resume||"");
+    if(strip(html)){ r.innerHTML=html; rz.hidden=false; } else { r.innerHTML=""; rz.hidden=true; }
+    showView("publication", { param:id, fromHistory:!!(opts&&opts.fromHistory) });
+  }
+
   function openAssises(id, opts){
     var d=assisesParId[id]; if(!d) return;
     renderAssises(d);
@@ -1430,7 +1617,8 @@
 
   /* ---------- Router ---------- */
   var views = { home:"view-home", qsn:"view-qsn", assises:"view-assises", actualites:"view-actualites",
-    article:"view-article", pays:"view-pays", membre:"view-membre", cellule:"view-cellule" };
+    article:"view-article", revue:"view-revue", publication:"view-publication",
+    pays:"view-pays", membre:"view-membre", cellule:"view-cellule" };
   function showView(name, opts){
     Object.keys(views).forEach(function(k){ document.getElementById(views[k]).classList.toggle("active", k===name); });
     document.body.classList.remove("menu-open");
@@ -1446,9 +1634,11 @@
      sachant pas réécrire les URL, le fichier 404.html reprend le site : toute adresse
      inconnue affiche donc la bonne page, et le routeur ci-dessous lit le chemin. */
   var SEGMENT = { home:"", qsn:"qui-sommes-nous", assises:"assises", actualites:"actualites",
-                  article:"actualites", pays:"pays", membre:"devenir-membre", cellule:"creer-une-cellule" };
+                  article:"actualites", revue:"revue", publication:"revue",
+                  pays:"pays", membre:"devenir-membre", cellule:"creer-une-cellule" };
   var VUE_DU_SEGMENT = { "qui-sommes-nous":"qsn", "assises":"assises", "actualites":"actualites",
-                         "pays":"pays", "devenir-membre":"membre", "creer-une-cellule":"cellule" };
+                         "revue":"revue", "pays":"pays", "devenir-membre":"membre",
+                         "creer-une-cellule":"cellule" };
   // En file:// il n'y a pas de chemin exploitable : on retombe sur les ancres.
   var routageChemin = (location.protocol==="http:" || location.protocol==="https:");
 
@@ -1469,6 +1659,7 @@
     if(!etat || !etat.vue || !views[etat.vue]) { showView("home",{fromHistory:true}); return; }
     if(etat.vue==="pays" && etat.param) return openCountry(etat.param,{fromHistory:true});
     if(etat.vue==="article" && etat.param) return openArticle(etat.param,{fromHistory:true});
+    if(etat.vue==="publication" && etat.param) return openPublication(etat.param,{fromHistory:true});
     if(etat.vue==="assises"){
       // Sans paramètre, ou si l'édition n'est pas encore chargée, on revient à la vedette.
       var d = etat.param && assisesParId[etat.param];
@@ -1495,6 +1686,7 @@
     var vue=VUE_DU_SEGMENT[p[0]];
     if(!vue) return { vue:"home", param:null };
     if(p[0]==="actualites" && p[1]) return { vue:"article", param:p[1] };
+    if(p[0]==="revue" && p[1]) return { vue:"publication", param:p[1] };
     return { vue:vue, param:p[1]||null };
   }
   var paysOverride = {};
@@ -1787,6 +1979,31 @@
         var et=history.state;
         renderAssises((et && et.vue==="assises" && et.param && assisesParId[et.param]) ? assisesParId[et.param] : vedette);
         renderEditions();
+      }
+
+      /* --- Revue scientifique ---
+         Traitée après les éditions : le regroupement s'appuie sur assisesParId. */
+      if(by.publication && by.publication.length){
+        publications.length=0; pubParId={};
+        by.publication.forEach(function(r){ var d=r.data||{};
+          var p={ id:r.id, titre:d.titre||"", auteurs:d.auteurs||"", etablissement:d.etablissement||"",
+                  pays:d.pays||"", categorie:d.categorie||"", resume:d.resume||"", fichier:d.fichier||"",
+                  assises_id:d.assises_id||"", assises_label:d.assises_label||"",
+                  date:d.date||"", dateAff:fmtDate(d.date) };
+          publications.push(p); pubParId[r.id]=p;
+        });
+        // À l'intérieur d'une édition : du plus récent au plus ancien, puis par titre.
+        publications.sort(function(a,b){
+          var d=String(b.date||"").localeCompare(String(a.date||""));
+          return d || String(a.titre).localeCompare(String(b.titre),"fr");
+        });
+        renderRevue();
+        renderAssisesRevue(assisesCourante);
+        // Lien direct vers une fiche : les travaux arrivent après le premier rendu.
+        var etp2=history.state;
+        if(etp2 && etp2.vue==="publication" && etp2.param) openPublication(etp2.param,{fromHistory:true});
+      } else {
+        renderRevue();
       }
     });
   })();

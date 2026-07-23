@@ -11,6 +11,7 @@ Site statique (HTML/CSS/JS) adossé à Supabase pour les contenus et l'espace d'
 - Accueil (chiffres clés, Assises, délégations, actualités, adhésion)
 - Qui sommes-nous (histoire, mission, Bureau Exécutif)
 - Assises du REMAO (Conakry 2026)
+- Revue scientifique (travaux des étudiants, rangés par édition des Assises)
 - Actualités et articles
 - Pages pays (8 délégations)
 - Devenir membre / Créer une cellule
@@ -19,7 +20,10 @@ Site statique (HTML/CSS/JS) adossé à Supabase pour les contenus et l'espace d'
 
 Tout le contenu éditorial se modifie depuis l'administration, sans toucher au code :
 actualités, pages des cellules nationales, membres du Bureau, éditions des Assises,
-documents officiels, partenaires et images du site.
+travaux de la revue scientifique, documents officiels, partenaires et images du site.
+
+Un travail de la revue se rattache à une édition des Assises : c'est ce lien qui range
+la page `/revue/` par édition. Créer d'abord l'édition, puis les travaux.
 
 L'accès est réservé aux comptes créés par le Bureau. Les inscriptions publiques sont
 désactivées : un nouveau compte se crée dans Supabase, Authentication > Users, en
