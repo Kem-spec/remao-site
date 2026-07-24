@@ -399,6 +399,33 @@
   .prog-row .day { font-family:var(--font-mono); color:var(--green); font-weight:700; font-size:14px; }
   .prog-row b { font-weight:700; } .prog-row p { margin:4px 0 0; color:var(--gray); font-size:14px; }
 
+  /* Chronogramme : une carte par jour, plusieurs creneaux par carte, reliees par
+     un fil vertical. Les jours d'arrivee et de depart, hors Assises, sont attenues. */
+  .chrono { position:relative; list-style:none; margin:0; padding:0 0 0 58px; display:grid; gap:14px; }
+  .chrono::before { content:""; position:absolute; left:19px; top:22px; bottom:22px; width:2px;
+    background:linear-gradient(180deg, var(--green), color-mix(in srgb,var(--green) 25%,transparent)); }
+  .chrono-jour { position:relative; padding:20px 24px; background:var(--card);
+    border:1px solid var(--line); border-radius:var(--r-md); box-shadow:var(--shadow-sm); }
+  .chrono-jour::before { content:attr(data-jour); position:absolute; left:-58px; top:18px;
+    width:40px; height:40px; border-radius:50%; display:grid; place-items:center; box-sizing:border-box;
+    font-family:var(--font-mono); font-weight:700; font-size:14px; color:#fff; line-height:1;
+    background:linear-gradient(140deg,var(--green),var(--green-700)); border:3px solid var(--bg); }
+  .chrono-jour.hors::before { background:var(--gray); font-size:15px; }
+  .chrono-jour.hors { background:transparent; border-style:dashed; box-shadow:none; }
+  .chrono-tete { display:flex; flex-wrap:wrap; align-items:baseline; gap:10px; margin-bottom:14px; }
+  .chrono-tete b { font-family:var(--font-mono); font-size:13.5px; font-weight:700; color:var(--green); }
+  .chrono-jour.hors .chrono-tete b { color:var(--gray); }
+  .chrono-tete span { font-weight:700; font-size:16.5px; }
+  .chrono-creneaux { list-style:none; margin:0; padding:0; display:grid; gap:9px; }
+  .chrono-creneaux li { display:grid; grid-template-columns:106px 1fr; gap:16px; align-items:baseline; }
+  .chrono-creneaux .q { font-family:var(--font-mono); font-size:11.5px; font-weight:700; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--green); }
+  .chrono-jour.hors .chrono-creneaux .q { color:var(--gray); }
+  .chrono-creneaux p { margin:0; color:var(--gray); font-size:14.5px; }
+  .acf { font-style:normal; font-size:11.5px; font-family:var(--font-mono); color:var(--red);
+    border:1px solid color-mix(in srgb,var(--red) 40%,transparent); border-radius:999px; padding:1px 8px;
+    margin-left:8px; white-space:nowrap; }
+
   /* Member / contact cards */
   .team { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
   .member { padding:26px 22px; text-align:center; }
@@ -495,6 +522,12 @@
     .stats, .countries, .partners, .grid-2, .foot-grid { grid-template-columns:1fr; }
     .countdown { grid-template-columns:repeat(2,1fr); }
     .prog-row { grid-template-columns:1fr; gap:6px; }
+    .chrono { padding-left:0; }
+    .chrono::before { display:none; }
+    .chrono-jour { padding:18px 20px; }
+    .chrono-jour::before { position:static; margin-bottom:12px; width:auto; height:auto; padding:5px 12px;
+      border-radius:999px; border:0; display:inline-grid; font-size:12px; }
+    .chrono-creneaux li { grid-template-columns:1fr; gap:2px; }
     .foot-bottom { flex-direction:column; }
     .section { padding-block:clamp(48px,12vw,72px); }
     .section-head { margin-bottom:34px; }
@@ -952,13 +985,107 @@
 
   <section class="section" style="padding-top:0" id="assisesProgSection">
     <div class="wrap">
-      <div class="section-head"><span class="eyebrow"><span class="dot"></span><span id="assisesProgEyebrow">Programme indicatif</span></span><h2 style="font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-top:14px" id="assisesProgTitre">Une semaine, trois temps forts.</h2></div>
-      <div class="prog" id="assisesProg">
-        <div class="prog-row"><span class="day">Jour 1-2</span><div><b>Ouverture & journées scientifiques</b><p>Cérémonie d'ouverture, communications, ateliers et conférences des invités.</p></div></div>
-        <div class="prog-row"><span class="day">Jour 3-4</span><div><b>Compétitions sportives & Génie Médical</b><p>Football, basketball, handball, lutte, et le concours de connaissances médicales entre délégations.</p></div></div>
-        <div class="prog-row"><span class="day">Jour 5</span><div><b>Soirées culturelles & Miss/Mister REMAO</b><p>Tenues traditionnelles, danse, slam et célébration de la diversité de la sous-région.</p></div></div>
-        <div class="prog-row"><span class="day">Jour 6</span><div><b>Clôture & passation</b><p>Remise des palmarès et passation vers la prochaine édition.</p></div></div>
+      <div class="section-head"><span class="eyebrow"><span class="dot"></span><span id="assisesProgEyebrow">Programme indicatif</span></span><h2 style="font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-top:14px" id="assisesProgTitre">Science, sport et culture, jour après jour.</h2></div>
+      <!-- Chronogramme provisoire de l'édition de Conakry, fourni par le comité
+           d'organisation. Sert de repli tant que le programme n'est pas saisi dans
+           l'admin ; data-edition évite qu'il s'affiche sous une autre édition. -->
+      <div class="prog" id="assisesProg" data-edition="21">
+        <ol class="chrono">
+          <li class="chrono-jour hors" data-jour="→">
+            <div class="chrono-tete"><b>Lun. 12 oct.</b><span>Arrivée des délégations</span></div>
+            <ul class="chrono-creneaux">
+              <li><span class="q">Journée</span><p>Accueil des délégations.</p></li>
+              <li><span class="q">Soir</span><p>Défilé et présentation des délégations, puis soirée d'intégration.</p></li>
+            </ul>
+          </li>
+          <li class="chrono-jour" data-jour="J1">
+            <div class="chrono-tete"><b>Mar. 13 oct.</b><span>Ouverture officielle</span></div>
+            <ul class="chrono-creneaux">
+              <li><span class="q">Matin</span><p>Cérémonie d'ouverture officielle.</p></li>
+              <li><span class="q">Journée</span><p>Conférences, puis début des communications scientifiques.</p></li>
+              <li><span class="q">En continu</span><p>Don de sang, premier jour.</p></li>
+            </ul>
+          </li>
+          <li class="chrono-jour" data-jour="J2">
+            <div class="chrono-tete"><b>Mer. 14 oct.</b><span>Communications scientifiques</span></div>
+            <ul class="chrono-creneaux">
+              <li><span class="q">Journée</span><p>Suite des communications scientifiques.</p></li>
+              <li><span class="q">En continu</span><p>Don de sang, second jour.<em class="acf">à confirmer</em></p></li>
+              <li><span class="q">Soir</span><p>Soirée Red Cup : objets fluo, cups rouges et DJ.</p></li>
+            </ul>
+          </li>
+          <li class="chrono-jour" data-jour="J3">
+            <div class="chrono-tete"><b>Jeu. 15 oct.</b><span>Jeu Génie</span></div>
+            <ul class="chrono-creneaux">
+              <li><span class="q">Matin</span><p>Jeu Génie, premières manches entre délégations.</p></li>
+              <li><span class="q">Après-midi</span><p>Jeu Génie, suite et finale.</p></li>
+              <li><span class="q">Soir</span><p>Feu de camp animé par des danseurs traditionnels de djembé.</p></li>
+            </ul>
+          </li>
+          <li class="chrono-jour" data-jour="J4">
+            <div class="chrono-tete"><b>Ven. 16 oct.</b><span>CMAO et portes ouvertes</span></div>
+            <ul class="chrono-creneaux">
+              <li><span class="q">Matin</span><p>Fitness et activités sportives, lancement du CMAO puis finale.</p></li>
+              <li><span class="q">Journée</span><p>Journée portes ouvertes : chaque délégation fait découvrir sa culture et sa gastronomie et rencontre sa communauté à Conakry.</p></li>
+              <li><span class="q">Soir</span><p>White Night, tenue blanche, tag des intégrés et DJ, ou soirée rétro.<em class="acf">à confirmer</em></p></li>
+            </ul>
+          </li>
+          <li class="chrono-jour" data-jour="J5">
+            <div class="chrono-tete"><b>Sam. 17 oct.</b><span>Cap sur Boffa</span></div>
+            <ul class="chrono-creneaux">
+              <li><span class="q">Matin</span><p>Départ de Conakry vers Boffa.</p></li>
+              <li><span class="q">Journée</span><p>Incursion aux cascades de Soumba et brunch à la plage de Boffa.</p></li>
+              <li><span class="q">Soir</span><p>Soirée ciné et karaoké.</p></li>
+            </ul>
+          </li>
+          <li class="chrono-jour" data-jour="J6">
+            <div class="chrono-tete"><b>Dim. 18 oct.</b><span>Journée à Boffa</span></div>
+            <ul class="chrono-creneaux">
+              <li><span class="q">Journée</span><p>Jeux et barbecue à Boffa.</p></li>
+              <li><span class="q">17h</span><p>Départ de Boffa, retour sur le site en soirée.</p></li>
+              <li><span class="q">Soir</span><p>Activités intégratives, soirée d'animation et jeux.<em class="acf">à confirmer</em></p></li>
+            </ul>
+          </li>
+          <li class="chrono-jour" data-jour="J7">
+            <div class="chrono-tete"><b>Lun. 19 oct.</b><span>Actions de terrain</span></div>
+            <ul class="chrono-creneaux">
+              <li><span class="q">Journée</span><p>Sensibilisations et consultation foraine, lieu à définir.</p></li>
+              <li><span class="q">Soir</span><p>Conakry by night, puis retour sur le site et jeux intégratifs animés par un DJ.</p></li>
+            </ul>
+          </li>
+          <li class="chrono-jour" data-jour="J8">
+            <div class="chrono-tete"><b>Mar. 20 oct.</b><span>Excursion sur une île</span></div>
+            <ul class="chrono-creneaux">
+              <li><span class="q">Journée</span><p>Excursion sur une île.</p></li>
+              <li><span class="q">Soir</span><p>Retour sur le site, feu de camp et témoignages sur le parcours médical.</p></li>
+              <li><span class="q">Soir</span><p>Boîte à lettres : lecture des messages anonymes.</p></li>
+            </ul>
+          </li>
+          <li class="chrono-jour" data-jour="J9">
+            <div class="chrono-tete"><b>Mer. 21 oct.</b><span>Assemblée générale et élections</span></div>
+            <ul class="chrono-creneaux">
+              <li><span class="q">Matin</span><p>Atelier de peinture et activités sportives : basketball, handball.</p></li>
+              <li><span class="q">Après-midi</span><p>Assemblée générale et élections.</p></li>
+              <li><span class="q">Soir</span><p>Soirée culturelle en tenue traditionnelle : théâtre, slam, élection Miss et Master REMAO 2026 et défilé des délégations.</p></li>
+            </ul>
+          </li>
+          <li class="chrono-jour" data-jour="J10">
+            <div class="chrono-tete"><b>Jeu. 22 oct.</b><span>Clôture et dîner de gala</span></div>
+            <ul class="chrono-creneaux">
+              <li><span class="q">Journée</span><p>Quartier libre.</p></li>
+              <li><span class="q">Soir</span><p>Dîner de gala et remise des prix.</p></li>
+              <li><span class="q">Soir</span><p>Mur des signatures : chaque participant y laisse son ressenti.</p></li>
+            </ul>
+          </li>
+          <li class="chrono-jour hors" data-jour="←">
+            <div class="chrono-tete"><b>Ven. 23 oct.</b><span>Départ des délégations</span></div>
+            <ul class="chrono-creneaux">
+              <li><span class="q">Journée</span><p>Départ des délégations.</p></li>
+            </ul>
+          </li>
+        </ol>
       </div>
+      <p id="assisesProgNote" style="color:var(--gray);font-size:13.5px;margin:18px 0 0">Les Assises se tiennent du 13 au 22 octobre. Le 12 et le 23 sont les journées d'arrivée et de départ des délégations. Chronogramme provisoire du comité d'organisation : certaines activités restent à confirmer.</p>
     </div>
   </section>
 
@@ -1390,6 +1517,10 @@
     return t.innerHTML;
   }
 
+  // Copie du chronogramme écrit en dur, mise de côté avant d'être remplacée par un
+  // programme saisi dans l'admin : la navigation entre éditions doit pouvoir y revenir.
+  var progRepli=null;
+
   function renderAssises(d){
     if(!d) return;
     assisesCourante = d;
@@ -1480,13 +1611,24 @@
     setTxt("assisesProgEyebrow", archivee ? "Bilan de l'édition" : "Programme indicatif");
     setTxt("assisesProgTitre", archivee
       ? ("Ce qu'il faut retenir de l'édition de "+(d.ville||"cette édition")+".")
-      : "Une semaine, trois temps forts.");
+      : "Science, sport et culture, jour après jour.");
     var prog=document.getElementById("assisesProg");
-    if(prog && d.texte && strip(d.texte)){
-      prog.innerHTML='<div class="prog-row" style="display:block"><div class="contenu-admin">'+nettoyerHtml(d.texte)+'</div></div>';
+    var note=document.getElementById("assisesProgNote");
+    var saisi = !!(d.texte && strip(d.texte));
+    // Le chronogramme écrit en dur ne vaut que pour l'édition qu'il décrit : sous une
+    // autre édition sans programme saisi, mieux vaut ne rien afficher.
+    var repliValable = !!(prog && prog.getAttribute("data-edition") && String(d.numero||"")===prog.getAttribute("data-edition"));
+    if(prog){
+      if(saisi){
+        if(progRepli===null) progRepli=prog.innerHTML;
+        prog.innerHTML='<div class="prog-row" style="display:block"><div class="contenu-admin">'+nettoyerHtml(d.texte)+'</div></div>';
+      } else if(progRepli!==null){
+        prog.innerHTML=progRepli;  // retour au repli après affichage d'une autre édition
+      }
     }
+    if(note) note.hidden = saisi || !repliValable;
     var ps=document.getElementById("assisesProgSection");
-    if(ps) ps.style.display = (archivee && !(d.texte && strip(d.texte))) ? "none" : "";
+    if(ps) ps.style.display = (saisi || (!archivee && repliValable)) ? "" : "none";
 
     renderAssisesRevue(d);
   }
